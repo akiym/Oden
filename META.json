@@ -1,7 +1,7 @@
 {
    "abstract" : "very simple DBI wrapper/ORMapper",
    "author" : [
-      "Atsushi Kobayashi  C<< <nekokak __at__ gmail.com> >>"
+      "Takumi Akiyama <t.akiym@gmail.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v3.0.13, CPAN::Meta::Converter version 2.150005",
@@ -72,10 +72,18 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/akiym/Oden/issues"
+      },
+      "homepage" : "https://github.com/akiym/Oden",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/akiym/Oden.git",
+         "web" : "https://github.com/akiym/Oden"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:AKIYM",
-   "x_contributors" : [
-      "Takumi Akiyama <t.akiym@gmail.com>"
-   ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

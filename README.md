@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.org/akiym/Oden.svg?branch=master)](https://travis-ci.org/akiym/Oden)
 # NAME
 
 Oden - very simple DBI wrapper/ORMapper
@@ -519,25 +519,17 @@ No bugs have been reported.
 
 # AUTHORS
 
+Takumi Akiyama <t.akiym@gmail.com>
+
 Atsushi Kobayashi  `<nekokak __at__ gmail.com>`
 
 Tokuhiro Matsuno <tokuhirom@gmail.com>
 
 Daisuke Maki `<daisuke@endeworks.jp>`
 
-# SUPPORT
-
-    irc: #dbix-skinny@irc.perl.org
-
-    ML: http://groups.google.com/group/dbix-skinny
-
-# REPOSITORY
-
-    git clone git://github.com/nekokak/p5-oden.git  
-
 # LICENCE AND COPYRIGHT
 
-Copyright (c) 2010, the Oden ["AUTHOR"](#author). All rights reserved.
+Copyright (c) 2017, the Oden ["AUTHORS"](#authors). All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See [perlartistic](https://metacpan.org/pod/perlartistic).

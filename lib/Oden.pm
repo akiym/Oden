@@ -762,7 +762,7 @@ sub DESTROY {
 __END__
 =head1 NAME
 
-Oden - very simple DBI wrapper/ORMapper
+Oden - pretty simple DBI wrapper/ORMapper
 
 =head1 SYNOPSIS
 
@@ -773,7 +773,7 @@ Oden - very simple DBI wrapper/ORMapper
 
 =head1 DESCRIPTION
 
-Oden is very simple DBI wrapper and simple O/R Mapper.
+Oden is pretty simple DBI wrapper and simple O/R Mapper.
 It aims to be lightweight, with minimal dependencies so it's easier to install. 
 
 =head1 BASIC USAGE
@@ -1286,25 +1286,17 @@ No bugs have been reported.
 
 =head1 AUTHORS
 
+Takumi Akiyama E<lt>t.akiym@gmail.comE<gt>
+
 Atsushi Kobayashi  C<< <nekokak __at__ gmail.com> >>
 
 Tokuhiro Matsuno E<lt>tokuhirom@gmail.comE<gt>
 
 Daisuke Maki C<< <daisuke@endeworks.jp> >>
 
-=head1 SUPPORT
-
-  irc: #dbix-skinny@irc.perl.org
-
-  ML: http://groups.google.com/group/dbix-skinny
-
-=head1 REPOSITORY
-
-  git clone git://github.com/nekokak/p5-oden.git  
-
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2010, the Oden L</AUTHOR>. All rights reserved.
+Copyright (c) 2017, the Oden L</AUTHORS>. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
