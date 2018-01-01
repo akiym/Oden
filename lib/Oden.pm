@@ -53,13 +53,6 @@ sub new {
     my %args   = @_ == 1 ? %{$_[0]} : @_;
     my $loader = delete $args{loader};
 
-    if (my $mode = delete $args{mode}) {
-        warn "IMPORTANT: 'mode' option is DEPRECATED AND *WILL* BE REMOVED. PLEASE USE 'no_ping' option.\n";
-        if (!exists $args{no_ping}) {
-            $args{no_ping} = $mode eq 'ping' ? 0 : 1;
-        }
-    }
-
     my $self = bless {
         schema_class  => "$class\::Schema",
         owner_pid     => $$,
@@ -100,22 +93,6 @@ sub set_boolean_value {
         $self->{boolean_value} = {true => $true, false => $false};
     }
     return $self->{boolean_value};
-}
-
-sub mode {
-    my $self = shift;
-    warn "IMPORTANT: 'mode' option is DEPRECATED AND *WILL* BE REMOVED. PLEASE USE 'no_ping' option.\n";
-
-    if (@_) {
-        my $mode = shift;
-        if ($mode eq 'ping') {
-            $self->no_ping(0);
-        } else {
-            $self->no_ping(1);
-        }
-    }
-
-    return $self->no_ping ? 'no_ping' : 'ping';
 }
 
 # forcefully connect
@@ -250,12 +227,6 @@ sub connected {
     my $self = shift;
     my $dbh  = $self->{dbh};
     return $self->owner_pid && $dbh->ping;
-}
-
-sub _execute {
-    my $self = shift;
-    warn "IMPORTANT: '_execute' method is DEPRECATED AND *WILL* BE REMOVED. PLEASE USE 'execute' method.\n";
-    return $self->execute(@_);
 }
 
 our $SQL_COMMENT_LEVEL = 0;
@@ -1247,10 +1218,6 @@ check connected or not.
 =item C<< $oden->reconnect >>
 
 reconnect database
-
-=item C<< $oden->mode >>
-
-DEPRECATED AND *WILL* BE REMOVED. PLEASE USE C< no_ping > option.
 
 =item How do you use display the profiling result?
 

@@ -494,10 +494,6 @@ Oden provides a number of methods to all your classes,
 
     reconnect database
 
-- `$oden->mode`
-
-    DEPRECATED AND \*WILL\* BE REMOVED. PLEASE USE ` no_ping ` option.
-
 - How do you use display the profiling result?
 
     use [Devel::KYTProf](https://metacpan.org/pod/Devel::KYTProf).
