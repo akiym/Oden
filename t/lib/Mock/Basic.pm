@@ -1,5 +1,5 @@
 package Mock::Basic;
-use base qw(TengTest);
+use base qw(OdenTest);
 use Mock::Basic::Schema;
 
 __PACKAGE__->load_plugin('Count');

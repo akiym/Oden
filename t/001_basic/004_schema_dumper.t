@@ -2,8 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 use DBI;
-use Teng;
-use Teng::Schema::Dumper;
+use Oden;
+use Oden::Schema::Dumper;
 
 # initialize
 my $dbh = DBI->connect('dbi:SQLite::memory:', '', '', {RaiseError => 1}) or die 'cannot connect to db';
@@ -35,7 +35,7 @@ $dbh->do(q{
 
 subtest "dump all tables" => sub {
     # generate schema and eval.
-    my $code = Teng::Schema::Dumper->dump(
+    my $code = Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
         inflate   => +{
@@ -58,7 +58,7 @@ subtest "dump all tables" => sub {
 
     {
         package Mock::DB;
-        use parent 'Teng';
+        use parent 'Oden';
     }
 
     my $db = Mock::DB->new(dbh => $dbh);
@@ -80,7 +80,7 @@ subtest "dump all tables" => sub {
 
 subtest "dump single table" => sub {
     # generate schema and eval.
-    my $code = Teng::Schema::Dumper->dump(
+    my $code = Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
         tables => 'user1',
@@ -93,7 +93,7 @@ subtest "dump single table" => sub {
 
 subtest "dump multiple tables" => sub {
     # generate schema and eval.
-    my $code = Teng::Schema::Dumper->dump(
+    my $code = Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
         tables => [qw/user1 user2/],
@@ -105,7 +105,7 @@ subtest "dump multiple tables" => sub {
 };
 subtest "dump with base_row_class" => sub {
     # generate schema and eval.
-    my $code = Teng::Schema::Dumper->dump(
+    my $code = Oden::Schema::Dumper->dump(
         dbh            => $dbh,
         namespace      => 'Mock::DB',
         base_row_class => 'Mock::DB::Row',

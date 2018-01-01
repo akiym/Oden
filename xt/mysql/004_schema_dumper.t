@@ -5,8 +5,8 @@ use xt::Utils::mysql;
 use Test::More;
 use lib './t';
 
-use Teng;
-use Teng::Schema::Dumper;
+use Oden;
+use Oden::Schema::Dumper;
 
 my $dbh = t::Utils->setup_dbh;
 
@@ -20,7 +20,7 @@ $dbh->do(q{
 });
 
 # generate schema and eval.
-my $code = Teng::Schema::Dumper->dump(
+my $code = Oden::Schema::Dumper->dump(
     dbh       => $dbh,
     namespace => 'Mock::DB',
 );
@@ -31,7 +31,7 @@ diag $@ if $@;
 
 {
     package Mock::DB;
-    use parent 'Teng';
+    use parent 'Oden';
 }
 
 my $db = Mock::DB->new(dbh => $dbh);

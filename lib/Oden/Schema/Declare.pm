@@ -1,9 +1,9 @@
-package Teng::Schema::Declare;
+package Oden::Schema::Declare;
 use strict;
 use warnings;
 use parent qw(Exporter);
-use Teng::Schema;
-use Teng::Schema::Table;
+use Oden::Schema;
+use Oden::Schema::Table;
 
 our @EXPORT = qw(
     schema
@@ -42,7 +42,7 @@ sub row_namespace ($) {
         (my $caller = caller(1)) =~ s/::Schema$//;
         join '::', $caller, 'Row';
     };
-    join '::', $prefix, Teng::Schema::camelize($table_name);
+    join '::', $prefix, Oden::Schema::camelize($table_name);
 }
 
 sub _current_schema {
@@ -65,9 +65,9 @@ sub _current_schema {
     }
 
     no warnings 'once';
-    if (! $schema_class->isa( 'Teng::Schema' ) ) {
+    if (! $schema_class->isa( 'Oden::Schema' ) ) {
         no strict 'refs';
-        push @{ "$schema_class\::ISA" }, 'Teng::Schema';
+        push @{ "$schema_class\::ISA" }, 'Oden::Schema';
         my $schema = $schema_class->new();
         $schema_class->set_default_instance( $schema );
     }
@@ -134,7 +134,7 @@ sub table(&) {
     }
 
     $current->add_table(
-        Teng::Schema::Table->new(
+        Oden::Schema::Table->new(
             columns      => \@col_names,
             name         => $table_name,
             primary_keys => \@table_pk,
@@ -153,14 +153,14 @@ __END__
 
 =head1 NAME
 
-Teng::Schema::Declare - DSL For Declaring Teng Schema
+Oden::Schema::Declare - DSL For Declaring Oden Schema
 
 =head1 NORMAL USE
 
     package MyDB::Schema;
     use strict;
     use warnings;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name    "your_table_name";
@@ -179,7 +179,7 @@ Teng::Schema::Declare - DSL For Declaring Teng Schema
 
 =head1 INLINE DECLARATION
 
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     my $schema = schema {
         table {
             name "your_table_name";
@@ -217,9 +217,9 @@ create Row class namespace
 
 =item C<base_row_class>
 
-Specify the default base row class with Teng::Schema::Declare.
+Specify the default base row class with Oden::Schema::Declare.
 
-Default value is L<Teng::Row>.
+Default value is L<Oden::Row>.
 
 This option is useful when you adds features for My::DB::Row class.
 
@@ -231,7 +231,7 @@ C<row_class> of each table definition has priority over C<default_row_class_pref
 
 e.g.:
 
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     my $schema = schema {
         default_row_class_prefix 'My::Entity';
         table {
@@ -246,7 +246,7 @@ Default value is determined by the schema class.
 e.g.:
 
     package My::DB::Schema;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     table {
         name 'user';
         column qw(name);

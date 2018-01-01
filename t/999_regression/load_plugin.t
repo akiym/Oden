@@ -6,7 +6,7 @@ use Test::More;
     package Mock::LoadPlugin;
     use strict;
     use warnings;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     use Test::More;
     __PACKAGE__->load_plugin('Count');
     eval q{
@@ -31,7 +31,7 @@ use Test::More;
     }
     package Mock::LoadPlugin::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name 'mock_table';
@@ -41,12 +41,12 @@ use Test::More;
     package Mock::LoadPlugin2;
     use strict;
     use warnings;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
 
     __PACKAGE__->load_plugin('Count');
     package Mock::LoadPlugin2::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name 'mock_table';
@@ -56,7 +56,7 @@ use Test::More;
 
 }
 use DBI;
-use Teng::Schema::Loader;
+use Oden::Schema::Loader;
 use MyGuard;
 
 my $db_file = __FILE__;

@@ -15,11 +15,11 @@ $dbh->do(q{COMMIT;});
 
 {
     package My::DB::Schema;
-    use parent qw/Teng::Schema/;
+    use parent qw/Oden::Schema/;
 }
 {
     package My::DB;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     __PACKAGE__->load_plugin(qw/SQLPager/);
 }
 

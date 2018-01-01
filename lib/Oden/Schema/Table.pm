@@ -1,4 +1,4 @@
-package Teng::Schema::Table;
+package Oden::Schema::Table;
 use strict;
 use warnings;
 use Class::Accessor::Lite
@@ -21,7 +21,7 @@ sub new {
         deflators       => [],
         inflators       => [],
         escaped_columns => {},
-        base_row_class  => 'Teng::Row',
+        base_row_class  => 'Oden::Row',
         %args
     }, $class;
 
@@ -125,15 +125,15 @@ __END__
 
 =head1 NAME
 
-Teng::Schema::Table - Teng table class.
+Oden::Schema::Table - Oden table class.
 
 =head1 METHODS
 
 =over 4
 
-=item $table = Teng::Schema::Table->new
+=item $table = Oden::Schema::Table->new
 
-create new Teng::Schema::Table's object.
+create new Oden::Schema::Table's object.
 
 =item $table->get_sql_type
 

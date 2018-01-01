@@ -1,4 +1,4 @@
-package Teng::Plugin::Lookup;
+package Oden::Plugin::Lookup;
 use strict;
 use warnings;
 use utf8;
@@ -44,7 +44,7 @@ sub lookup {
         {
             sql        => $sql,
             row_data   => $row,
-            teng       => $self,
+            oden       => $self,
             table      => $table,
             table_name => $table_name,
         }
@@ -56,12 +56,12 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::Lookup - lookup single row.
+Oden::Plugin::Lookup - lookup single row.
 
 =head1 NAME
 
     package MyDB;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     __PACKAGE__->load_plugin('Lookup');
 
     package main;
@@ -80,9 +80,9 @@ This plugin provides fast lookup row .
 
 lookup single row records.
 
-Teng#single is heavy.
+Oden#single is heavy.
 
-NOTE: Unlike Teng#single, this method returns a blank list in list context when no desired records are found.
+NOTE: Unlike Oden#single, this method returns a blank list in list context when no desired records are found.
 
 =back
 

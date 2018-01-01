@@ -13,7 +13,7 @@ $db->insert('mock_basic',{
 subtest 'update/delete error: no table info' => sub {
     my $row = $db->search_by_sql(q{SELECT name FROM mock_basic})->next;
 
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     eval {
         $row->update({name => 'python'});
@@ -33,7 +33,7 @@ subtest 'update/delete error: table have no pk' => sub {
     local $table->{primary_keys};
 
     my $row = $db->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     eval {
         $row->update({name => 'python'});
@@ -53,7 +53,7 @@ subtest 'update/delete error: table have no pk' => sub {
     local $table->{primary_keys} = [];
 
     my $row = $db->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     eval {
         $row->update({name => 'python'});
@@ -70,7 +70,7 @@ subtest 'update/delete error: table have no pk' => sub {
 
 subtest 'update/delete error: select column has no primary key' => sub {
     my $row = $db->search_by_sql('select name from mock_basic')->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     eval {
         $row->update({name => 'python'});

@@ -1,4 +1,4 @@
-package Teng::Plugin::SQLPager;
+package Oden::Plugin::SQLPager;
 use strict;
 use warnings;
 use utf8;
@@ -20,8 +20,8 @@ sub search_by_sql_with_pager {
     my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
     $sth->execute(@$binds) or Carp::croak $self->dbh->errstr;
 
-    my $itr = Teng::Iterator->new(
-        teng             => $self,
+    my $itr = Oden::Iterator->new(
+        oden             => $self,
         sth              => $sth,
         sql              => $sql,
         row_class        => $self->schema->get_row_class($table_name),
@@ -50,12 +50,12 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::SQLPager - Paginate with SQL
+Oden::Plugin::SQLPager - Paginate with SQL
 
 =head1 SYNOPSIS
 
     package My::DB;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     __PACKAGE__->load_plugin(qw/SQLPager/);
 
     # in your application
@@ -97,7 +97,7 @@ B<page> is a current page number. B<rows> is a entries per page.
 
 You can pass a table name.
 
-This argument is optional. If you don't pass a table name, Teng guess table name automatically.
+This argument is optional. If you don't pass a table name, Oden guess table name automatically.
 
 =back
 

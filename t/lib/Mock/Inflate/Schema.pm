@@ -1,7 +1,7 @@
 package Mock::Inflate::Schema;
 use strict;
 use warnings;
-use Teng::Schema::Declare;
+use Oden::Schema::Declare;
 use Mock::Inflate::Name;
 
 table {

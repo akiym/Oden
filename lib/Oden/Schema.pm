@@ -1,7 +1,7 @@
-package Teng::Schema;
+package Oden::Schema;
 use strict;
 use warnings;
-use Teng::Row;
+use Oden::Row;
 use Class::Accessor::Lite
     rw => [ qw(
         tables
@@ -48,7 +48,7 @@ sub get_row_class {
 
     my $table = $self->{tables}->{$table_name};
     return $table->{row_class} if $table;
-    return 'Teng::Row';
+    return 'Oden::Row';
 }
 
 sub camelize {
@@ -68,35 +68,35 @@ __END__
 
 =head1 NAME
 
-Teng::Schema - Schema API for Teng
+Oden::Schema - Schema API for Oden
 
 =head1 METHODS
 
 =over 4
 
-=item $schema = Teng::Schema->new
+=item $schema = Oden::Schema->new
 
-create new Teng::Schema's object.
+create new Oden::Schema's object.
 
-=item $schema = Teng::Schema->instance
+=item $schema = Oden::Schema->instance
 
-Get Teng::Schema's default instance object, was set by C<< Teng::Schema->set_default_instance() >>.
+Get Oden::Schema's default instance object, was set by C<< Oden::Schema->set_default_instance() >>.
 
-=item Teng::Schema->set_default_instance($schema)
+=item Oden::Schema->set_default_instance($schema)
 
 set default Schema instance.
 
 =item $schema->add_table($table);
 
-add Teng::Schema::Table's object.
+add Oden::Schema::Table's object.
 
 =item my $table = $schema->get_table($table_name);
 
-get Teng::Schema::Table's object.
+get Oden::Schema::Table's object.
 
 =item my $row_class = $schema->get_row_class($table_name);
 
-get your table row class or Teng::Row class.
+get your table row class or Oden::Row class.
 
 =item $schema->camelize($string)
 

@@ -1,11 +1,11 @@
-package Teng::Plugin::BulkInsert;
+package Oden::Plugin::BulkInsert;
 use strict;
 use warnings;
 use utf8;
 
 our @EXPORT = qw/bulk_insert/;
 
-warn "IMPORTANT: Teng::Plugin::BulkInsert is DEPRECATED AND *WILL* BE REMOVED. DO NOT USE.\n";
+warn "IMPORTANT: Oden::Plugin::BulkInsert is DEPRECATED AND *WILL* BE REMOVED. DO NOT USE.\n";
 
 sub bulk_insert {
     my ($self, $table_name, $args) = @_;
@@ -44,13 +44,13 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::BulkInsert - (DEPRECATED) Bulk insert helper
+Oden::Plugin::BulkInsert - (DEPRECATED) Bulk insert helper
 
 =head1 PROVIDED METHODS
 
 =over 4
 
-=item C<< $teng->bulk_insert($table_name, \@rows_data) >>
+=item C<< $oden->bulk_insert($table_name, \@rows_data) >>
 
 Accepts either an arrayref of hashrefs.
 each hashref should be a structure suitable

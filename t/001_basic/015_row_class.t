@@ -4,7 +4,7 @@ use Test::More;
 
 {
     package Mock::BasicRow;
-    use base qw(Teng);
+    use base qw(Oden);
 
     sub setup_test_db {
         shift->do(q{
@@ -17,7 +17,7 @@ use Test::More;
 
     package Mock::BasicRow::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name 'mock_basic_row';
@@ -50,17 +50,17 @@ use Test::More;
     package Mock::BasicRow::BarRow;
     use strict;
     use warnings;
-    use base 'Teng::Row';
+    use base 'Oden::Row';
 
     package Mock::BasicRow::FooRow;
     use strict;
     use warnings;
-    use base 'Teng::Row';
+    use base 'Oden::Row';
 
     package Mock::BasicRow::Row::MockBasicRow;
     use strict;
     use warnings;
-    use base 'Teng::Row';
+    use base 'Oden::Row';
 
     sub foo {
         'foo'
@@ -86,7 +86,7 @@ $db_basic_row->insert('mock_basic_row',{
 
 subtest 'no your row class' => sub {
     my $row = $db_basic->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 };
 
 subtest 'your row class' => sub {
@@ -122,7 +122,7 @@ subtest 'your row class AUTOLOAD' => sub {
 
 subtest 'AUTOLOAD' => sub {
     my $row = $db_basic->search_by_sql(q{select id as mock_basic_id from mock_basic where id = 1})->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->mock_basic_id, 1;
     ok ! $row->can('mock_basic_id');
 };
@@ -131,17 +131,17 @@ subtest 'can not use (update|delete) method' => sub {
     $db_basic->do('create table test_db (id integer)');
     $db_basic->do('insert into test_db (id) values (1)');
     my $row = $db_basic->search_by_sql(q{select id from test_db where id = 1})->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id, 1;
     eval {
         $row->update;
     };
-    like $@, qr/can't update from basic Teng::Row class./;
+    like $@, qr/can't update from basic Oden::Row class./;
     $@ = undef;
     eval {
         $row->delete;
     };
-    like $@, qr/can't delete from basic Teng::Row class./;
+    like $@, qr/can't delete from basic Oden::Row class./;
     $db_basic->do('drop table test_db');
 };
 

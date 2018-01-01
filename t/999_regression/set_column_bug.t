@@ -16,7 +16,7 @@ subtest 'set_column value un deflate bug' => sub {
         foo  => 'bar',
         bar  => 'zzz',
     });
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     isa_ok $row->name, 'Mock::Inflate::Name';
     note explain $row->get_columns;
 

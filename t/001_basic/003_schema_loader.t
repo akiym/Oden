@@ -2,8 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 use DBI;
-use Teng;
-use Teng::Schema::Loader;
+use Oden;
+use Oden::Schema::Loader;
 
 unlink 'loader.db' if -f 'loader.db';
 
@@ -20,11 +20,11 @@ $dbh->do(q{
 
 {
     package Mock::DB;
-    use parent 'Teng';
+    use parent 'Oden';
 }
 
 subtest 'use $dbh' => sub {
-    my $db = Teng::Schema::Loader->load(
+    my $db = Oden::Schema::Loader->load(
         dbh       => $dbh,
         namespace => 'Mock::DB',
     );
@@ -44,7 +44,7 @@ subtest 'use $dbh' => sub {
 };
 
 subtest 'use connect_info' => sub {
-    my $db = Teng::Schema::Loader->load(
+    my $db = Oden::Schema::Loader->load(
         connect_info => ['dbi:SQLite:./loader.db','',''],
         namespace    => 'Mock::DB',
     );
@@ -63,8 +63,8 @@ subtest 'use connect_info' => sub {
     is $db->single('user', { user_id => 2 })->name, 'inserted 2';
 };
 
-subtest 'auto create teng class' => sub {
-    my $db = Teng::Schema::Loader->load(
+subtest 'auto create oden class' => sub {
+    my $db = Oden::Schema::Loader->load(
         connect_info => ['dbi:SQLite:./loader.db','',''],
         namespace    => 'Proj::DB',
     );
@@ -85,7 +85,7 @@ subtest 'auto create teng class' => sub {
 
 {
     package Mock::DB2;
-    use parent 'Teng';
+    use parent 'Oden';
 
     sub new {
         shift->SUPER::new(@_);
@@ -96,7 +96,7 @@ subtest 'constructor is overrided' => sub {
     local $@;
 
     my $db = eval {
-        Teng::Schema::Loader->load(
+        Oden::Schema::Loader->load(
             dbh       => $dbh,
             namespace => 'Mock::DB2',
         );

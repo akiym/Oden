@@ -34,7 +34,7 @@ subtest 'execute method' => sub {
     }
 
     {
-        local $ENV{TENG_SQL_COMMENT} = 1;
+        local $ENV{ODEN_SQL_COMMENT} = 1;
         my $sth = $db_basic->execute('SELECT * FROM mock_basic'); my ($file, $line) = (__FILE__, __LINE__);
         isa_ok $sth, 'DBI::st';
         is_deeply $sth->fetchall_arrayref(+{}), $data;

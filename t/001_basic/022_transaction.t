@@ -82,7 +82,7 @@ subtest 'call_txn_scope_after_fork' => sub {
                 id   => 3,
                 name => 'python',
             });
-            isa_ok $row, 'Teng::Row';
+            isa_ok $row, 'Oden::Row';
             is $row->name, 'python';
 
         $txn->commit;

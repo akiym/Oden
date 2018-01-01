@@ -9,7 +9,7 @@ use Test::More;
 use lib './t';
 use Mock::Basic;
 
-use Teng;
+use Oden;
 use DBIx::Tracer;
 
 my $dbh = t::Utils->setup_dbh;

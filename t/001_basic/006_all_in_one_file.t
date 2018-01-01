@@ -5,7 +5,7 @@ use Test::More;
 
 {
     package Mock::BasicALLINONE;
-    use parent 'Teng';
+    use parent 'Oden';
 
     sub setup_test_db {
         shift->do(q{
@@ -22,7 +22,7 @@ use Test::More;
 {
     package Mock::BasicALLINONE::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     schema {
         table {
             name 'mock_basic';
@@ -40,7 +40,7 @@ use Test::More;
     package Mock::BasicALLINONE::Row::MockBasic;
     use strict;
     use warnings;
-    use base 'Teng::Row';
+    use base 'Oden::Row';
 }
 
 my $db = Mock::BasicALLINONE->new(connect_info => ['dbi:SQLite::memory:', '','']);
@@ -52,7 +52,7 @@ $db->insert('mock_basic',{
 });
 
 my $itr = $db->search_by_sql(q{SELECT * FROM mock_basic WHERE id = ?}, [1]);
-isa_ok $itr, 'Teng::Iterator';
+isa_ok $itr, 'Oden::Iterator';
 
 my $row = $itr->next;
 isa_ok $row, 'Mock::BasicALLINONE::Row::MockBasic';

@@ -39,19 +39,19 @@ sub isbool {
 
 subtest 'search_no_sql_types' => sub {
     my $itr = $db->search('mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $driver_name = $db->dbh->{Driver}->{Name};
     if ($driver_name ne 'mysql') {
         while (my $row = $itr->next) {
-            isa_ok $row, 'Teng::Row';
+            isa_ok $row, 'Oden::Row';
             is isnum($row->id), 1, "is num($driver_name)";
             is isnum($row->name), 0, "is string($driver_name)";
             is isnum($row->delete_fg), 1, "is num($driver_name)";
         }
     } else {
         while (my $row = $itr->next) {
-            isa_ok $row, 'Teng::Row';
+            isa_ok $row, 'Oden::Row';
             is isnum($row->name), 0, "is string";
         }
     }
@@ -59,11 +59,11 @@ subtest 'search_no_sql_types' => sub {
 
 subtest 'search_apply_sql_types_itr' => sub {
     my $itr = $db->search('mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     $itr->apply_sql_types(1);
     while (my $row = $itr->next) {
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is isnum($row->name), 0, "is string";
         is isbool($db, $row->delete_fg), 1, "is bool";
     }
@@ -72,10 +72,10 @@ subtest 'search_apply_sql_types_itr' => sub {
 subtest 'search_apply_sql_types_db' => sub {
     $db->apply_sql_types(1);
     my $itr = $db->search('mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     while (my $row = $itr->next) {
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is isnum($row->name), 0, "is string";
         is isbool($db, $row->delete_fg), 1, "is bool";
     }
@@ -84,10 +84,10 @@ subtest 'search_apply_sql_types_db' => sub {
 subtest 'search_apply_sql_types_boolean' => sub {
     $db->set_boolean_value(JSON::XS::true, JSON::XS::false);
     my $itr = $db->search('mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     while (my $row = $itr->next) {
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is isnum($row->name), 0, "is string";
         is isbool($db, $row->delete_fg), 1, "is bool";
         like ref $row->delete_fg, qr{^JSON::.+Boolean}, "is JSON::* object";
@@ -96,7 +96,7 @@ subtest 'search_apply_sql_types_boolean' => sub {
 
 subtest 'count' => sub {
     my $itr = $db->search_by_sql('select count(*) as cnt from mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
     my $driver_name = $db->dbh->{Driver}->{Name};
@@ -108,7 +108,7 @@ subtest 'count' => sub {
 subtest 'count_with_guess_sql_type' => sub {
     $db->guess_sql_types(1);
     my $itr = $db->search_by_sql('select count(*) as cnt from mock_basic_sql_types');
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
     my $driver_name = $db->dbh->{Driver}->{Name};

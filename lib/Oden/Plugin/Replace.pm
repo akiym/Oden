@@ -1,4 +1,4 @@
-package Teng::Plugin::Replace;
+package Oden::Plugin::Replace;
 use strict;
 use warnings;
 use utf8;
@@ -30,7 +30,7 @@ sub replace {
     $table->row_class->new(
         {
             row_data   => $args,
-            teng       => $self,
+            oden       => $self,
             table_name => $table_name,
         }
     );
@@ -41,13 +41,13 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::Replace - Add replace for Teng
+Oden::Plugin::Replace - Add replace for Oden
 
 =head1 PROVIDED METHODS
 
 =over 4
 
-=item C<< $teng->replace($table_name, \%rows_data) >>
+=item C<< $oden->replace($table_name, \%rows_data) >>
 
 record by replace.
 

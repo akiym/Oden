@@ -17,7 +17,7 @@ is $db->args_class, ref $db;
 # unload plugin class;
 undef &Mock::Basic::args_class;
 undef &Mock::Basic::args_opt;
-undef %Teng::Plugin::ArgsTest::;
+undef %Oden::Plugin::ArgsTest::;
 
 my %args = (opt1 => 'a', opt2 => 'b');
 (ref $db)->load_plugin('ArgsTest',

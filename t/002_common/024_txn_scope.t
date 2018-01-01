@@ -15,7 +15,7 @@ subtest 'insert using txn_scope' => sub {
             id   => 1,
             name => 'perl',
         });
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
         $guard->rollback;
     }
@@ -34,7 +34,7 @@ subtest 'insert using txn_scope (and let the guard fire)' => sub {
             id   => 1,
             name => 'perl',
         });
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
     }
 

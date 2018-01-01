@@ -1,4 +1,4 @@
-package Teng::Row;
+package Oden::Row;
 use strict;
 use warnings;
 use Carp ();
@@ -20,9 +20,9 @@ sub new {
     }, $class;
 
     $self->{select_columns} ||= [keys %{$args->{row_data}}];
-    $self->{table} ||= $args->{teng}->schema->get_table($args->{table_name});
+    $self->{table} ||= $args->{oden}->schema->get_table($args->{table_name});
 
-    $obj{$self+0} = delete $self->{teng};
+    $obj{$self+0} = delete $self->{oden};
 
     $self;
 }
@@ -138,8 +138,8 @@ sub is_changed {
 sub update {
     my ($self, $upd, $where) = @_;
 
-    if (ref($self) eq 'Teng::Row') {
-        Carp::croak q{can't update from basic Teng::Row class.};
+    if (ref($self) eq 'Oden::Row') {
+        Carp::croak q{can't update from basic Oden::Row class.};
     }
 
     my $table      = $self->{table};
@@ -183,8 +183,8 @@ sub update {
 sub delete {
     my $self = shift;
 
-    if (ref($self) eq 'Teng::Row') {
-        Carp::croak q{can't delete from basic Teng::Row class.};
+    if (ref($self) eq 'Oden::Row') {
+        Carp::croak q{can't delete from basic Oden::Row class.};
     }
 
     $self->handle->delete($self->{table_name}, $self->_where_cond);
@@ -251,15 +251,15 @@ sub DESTROY {
 __END__
 =head1 NAME
 
-Teng::Row - Teng's Row class
+Oden::Row - Oden's Row class
 
 =head1 METHODS
 
 =over
 
-=item $row = Teng::Row->new
+=item $row = Oden::Row->new
 
-create new Teng::Row's instance
+create new Oden::Row's instance
 
 =item $row->get($col)
 
@@ -339,7 +339,7 @@ If C<$arg> is supplied, each pairs are passed to C<set()> method before update.
 If C<$where> is supplied, each pairs to be merged into default (primary keys) WHERE condition.
 It is useful for optimistic lock.
 
-    $row    = $teng->single(table_name, {id => 1});
+    $row    = $oden->single(table_name, {id => 1});
     $result = $row->update({point => 2}, {point => 1});
     # UPDATE table_name SET point = 2 WHERE id = 1 AND point = 1;
 
@@ -357,7 +357,7 @@ You can specify C<$opt> like C<< { for_update => 1} >> optionally, which is used
 
 =item $row->handle
 
-get Teng object.
+get Oden object.
 
     $row->handle->single('table', {id => 1});
 
@@ -365,7 +365,7 @@ get Teng object.
 
 =head1 NOTE FOR COLUMN NAME METHOD
 
-Teng::Row has methods that have name from column name. For example, if a table has column named 'foo', Teng::Row instance of it has method 'foo'.
+Oden::Row has methods that have name from column name. For example, if a table has column named 'foo', Oden::Row instance of it has method 'foo'.
 
 This method has different behave for setter or getter as following:
 

@@ -1,9 +1,9 @@
 use strict;
 use Test::More;
-use Teng::Schema::Declare;
+use Oden::Schema::Declare;
 
 subtest 'edge cases' => sub {
-    my $klass = "Teng::TestFor::Declare002Schema";
+    my $klass = "Oden::TestFor::Declare002Schema";
     my $schema = schema {
         table {
             name 'foo';

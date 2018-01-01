@@ -1,6 +1,6 @@
 use t::Utils;
 use Test::More;
-use Teng::Schema::Declare;
+use Oden::Schema::Declare;
 
 subtest 'with prefix' => sub {
     my $schema = schema {
@@ -28,7 +28,7 @@ subtest 'with prefix and row_class' => sub {
 subtest 'without prefix' => sub {
     {
         package t::My::DB::Schema;
-        use Teng::Schema::Declare;
+        use Oden::Schema::Declare;
         table {
             name 'user';
             columns qw(name);

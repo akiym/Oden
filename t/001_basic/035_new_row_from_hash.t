@@ -24,7 +24,7 @@ subtest 'new_row_from_hash method' => sub {
 
     my $rows = [ map { $db_basic->new_row_from_hash(mock_basic => $_) } @$raw_data ];
     is $rows->[0]->{sql}, sprintf('/* DUMMY QUERY Mock::Basic->new_row_from_hash created from %s line %d */', __FILE__, __LINE__ - 1);
-    isa_ok $_, 'Teng::Row' for @$rows;
+    isa_ok $_, 'Oden::Row' for @$rows;
     is $rows->[0]->id, 1;
     is $rows->[1]->id, 2;
     is $rows->[2]->id, 3;

@@ -12,7 +12,7 @@ test.*
 tools/externals
 db1.db
 MYMETA.*
-/Teng-*
+/Oden-*
 /.build
 /_build_params
 /Build

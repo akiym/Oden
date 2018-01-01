@@ -17,33 +17,33 @@ $db->insert('mock_basic',{
 
 subtest 'search_named' => sub {
     my $itr = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id}, {id => 1});
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id , 1;
     is $row->name, 'perl';
 };
 
 subtest 'search_named' => sub {
     my $itr = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id OR name = :name}, {id => 1, name => 'ruby'});
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my @row = $itr->all;
-    isa_ok $row[0], 'Teng::Row';
+    isa_ok $row[0], 'Oden::Row';
     is $row[0]->id , 1;
     is $row[0]->name, 'perl';
-    isa_ok $row[1], 'Teng::Row';
+    isa_ok $row[1], 'Oden::Row';
     is $row[1]->id , 2;
     is $row[1]->name, 'ruby';
 };
 
 subtest 'search_named with arrayref' => sub {
 
-    my $org_code = Teng->can('search_by_sql');
+    my $org_code = Oden->can('search_by_sql');
     my ($query, $bind);
     no warnings 'redefine';
-    local *Teng::search_by_sql = sub {
+    local *Oden::search_by_sql = sub {
         $query = $_[1];
         $bind  = $_[2];
         $org_code->(@_);
@@ -57,10 +57,10 @@ subtest 'search_named with arrayref' => sub {
         limit 100
     }, +{ ids => [1, 2, 3] });
 
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id , 1;
     is $row->name, 'perl';
 

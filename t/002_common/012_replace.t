@@ -16,14 +16,14 @@ SKIP: {
             id   => 1,
             name => 'perl',
         });
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
 
         my $replaced_row = $db->replace('mock_basic',{
             id   => 1,
             name => 'ruby',
         });
-        isa_ok $replaced_row, 'Teng::Row';
+        isa_ok $replaced_row, 'Oden::Row';
         is $replaced_row->name, 'ruby';
     };
 }

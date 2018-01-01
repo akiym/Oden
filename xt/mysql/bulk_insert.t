@@ -5,8 +5,8 @@ use xt::Utils::mysql;
 use Test::More;
 use lib './t';
 
-use Teng;
-use Teng::Schema::Loader;
+use Oden;
+use Oden::Schema::Loader;
 
 my $dbh = t::Utils->setup_dbh;
 $dbh->do(q{
@@ -15,14 +15,14 @@ $dbh->do(q{
     );
 });
 
-my $db = Teng::Schema::Loader->load(
+my $db = Oden::Schema::Loader->load(
     dbh       => $dbh,
     namespace => 'Mock::DB',
 );
 
 {
     package Mock::DB;
-    use parent 'Teng';
+    use parent 'Oden';
     __PACKAGE__->load_plugin('BulkInsert');
 }
 

@@ -1,4 +1,4 @@
-package Teng::Plugin::Count;
+package Oden::Plugin::Count;
 use strict;
 use warnings;
 use utf8;
@@ -25,12 +25,12 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::Count - Count rows in database.
+Oden::Plugin::Count - Count rows in database.
 
 =head1 NAME
 
     package MyDB;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     __PACKAGE__->load_plugin('Count');
 
     package main;

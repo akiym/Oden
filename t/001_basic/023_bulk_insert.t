@@ -33,7 +33,7 @@ subtest 'DEPRECATED' => sub {
 
     close $fh;
 
-    like $buffer, qr/IMPORTANT: Teng::Plugin::BulkInsert is DEPRECATED AND \*WILL\* BE REMOVED\. DO NOT USE\./;
+    like $buffer, qr/IMPORTANT: Oden::Plugin::BulkInsert is DEPRECATED AND \*WILL\* BE REMOVED\. DO NOT USE\./;
 };
 
 done_testing;

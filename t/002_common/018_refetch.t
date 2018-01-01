@@ -11,11 +11,11 @@ subtest 'refetch' => sub {
         id   => 1,
         name => 'perl',
     });
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
 
     my $refetch_row = $row->refetch;
-    isa_ok $refetch_row, 'Teng::Row';
+    isa_ok $refetch_row, 'Oden::Row';
     is $refetch_row->name, 'perl';
 };
 

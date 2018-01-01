@@ -3,7 +3,7 @@ use Test::More;
 
 {
     package Mock::NoSchema;
-    use Teng;
+    use Oden;
     1;
 }
 

@@ -1,4 +1,4 @@
-package Teng::Plugin::FindOrCreate;
+package Oden::Plugin::FindOrCreate;
 use strict;
 use warnings;
 use utf8;
@@ -18,12 +18,12 @@ __END__
 
 =head1 NAME
 
-Teng::Plugin::FindOrCreate - provide find_or_create method for your Teng class.
+Oden::Plugin::FindOrCreate - provide find_or_create method for your Oden class.
 
 =head1 NAME
 
     package MyDB;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
     __PACKAGE__->load_plugin('FindOrCreate');
 
     package main;

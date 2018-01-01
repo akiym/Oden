@@ -1,13 +1,13 @@
 package Mock::Inflate;
 use strict;
-use parent qw/Teng/;
+use parent qw/Oden/;
 
 sub setup_test_db {
-    my $teng = shift;
+    my $oden = shift;
 
-    my $dbd = $teng->{driver_name};
+    my $dbd = $oden->{driver_name};
     if ($dbd eq 'SQLite') {
-        $teng->do(q{
+        $oden->do(q{
             CREATE TABLE mock_inflate (
                 id   INT,
                 name TEXT,
@@ -18,10 +18,10 @@ sub setup_test_db {
             )
         });
     } elsif ($dbd eq 'mysql') {
-        $teng->do(
+        $oden->do(
             q{DROP TABLE IF EXISTS mock_inflate}
         );
-        $teng->do(q{
+        $oden->do(q{
             CREATE TABLE mock_inflate (
                 id        INT auto_increment,
                 name      TEXT,

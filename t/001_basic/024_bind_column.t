@@ -36,7 +36,7 @@ subtest 'insert data' => sub {
     });
 
 
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'name';
     is $row->body, 'body';
     is $row->raw,  'raw';
@@ -68,7 +68,7 @@ subtest 'insert data' => sub {
     );
 
     $row = $db->single('mock_basic_bind_column');
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id,   4;
     is $row->uid,  4;
     is $row->name, 'name4';
@@ -80,7 +80,7 @@ subtest 'insert data' => sub {
     );
 
     $row = $db->search('mock_basic_bind_column')->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id,   5;
     is $row->uid,  5;
     is $row->name, 'name5';

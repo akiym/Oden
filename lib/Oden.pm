@@ -1,4 +1,4 @@
-package Teng;
+package Oden;
 use strict;
 use warnings;
 use Carp ();
@@ -6,11 +6,11 @@ use Class::Load 0.06 ();
 use DBI 1.33;
 use Scalar::Util;
 use SQL::Maker::SQLType qw(sql_type);
-use Teng::Row;
-use Teng::Iterator;
-use Teng::Schema;
+use Oden::Row;
+use Oden::Iterator;
+use Oden::Schema;
 use DBIx::TransactionManager 1.06;
-use Teng::QueryBuilder;
+use Oden::QueryBuilder;
 use Class::Accessor::Lite 0.05
    rw => [ qw(
         connect_info
@@ -28,11 +28,11 @@ use Class::Accessor::Lite 0.05
     )]
 ;
 
-our $VERSION = '0.31';
+our $VERSION = '0.01';
 
 sub load_plugin {
     my ($class, $pkg, $opt) = @_;
-    $pkg = $pkg =~ s/^\+// ? $pkg : "Teng::Plugin::$pkg";
+    $pkg = $pkg =~ s/^\+// ? $pkg : "Oden::Plugin::$pkg";
     Class::Load::load_class($pkg);
 
     $class = ref($class) if ref($class);
@@ -184,7 +184,7 @@ sub reconnect {
         # ---
         # Don't assign $self-{dbh} directry.
         # Because if $self->{dbh} is undef then reconnect fail always.
-        # https://github.com/nekokak/p5-Teng/pull/98
+        # https://github.com/nekokak/p5-Oden/pull/98
         my $new_dbh = eval { $dbh->clone }
             or Carp::croak("ReConnection error: " . ($@ || $DBI::errstr));
         $self->{dbh} = $new_dbh;
@@ -217,7 +217,7 @@ sub _prepare_from_dbh {
     $self->{driver_name} = $self->{dbh}->{Driver}->{Name};
     my $builder = $self->{sql_builder};
     if (! $builder ) {
-        my $sql_builder_class = $self->{sql_builder_class} || 'Teng::QueryBuilder';
+        my $sql_builder_class = $self->{sql_builder_class} || 'Oden::QueryBuilder';
         $builder = $sql_builder_class->new(
             driver => $self->{driver_name},
             %{ $self->{sql_builder_args} || {} }
@@ -268,11 +268,11 @@ our $SQL_COMMENT_LEVEL = 0;
 sub execute {
     my ($self, $sql, $binds) = @_;
 
-    if ($ENV{TENG_SQL_COMMENT} || $self->sql_comment) {
+    if ($ENV{ODEN_SQL_COMMENT} || $self->sql_comment) {
         my $i = $SQL_COMMENT_LEVEL; # optimize, as we would *NEVER* be called
         while ( my (@caller) = caller($i++) ) {
             next if ( $caller[0]->isa( __PACKAGE__ ) );
-            next if $caller[0] =~ /^Teng::/; # skip Teng::Row, Teng::Plugin::* etc.
+            next if $caller[0] =~ /^Oden::/; # skip Oden::Row, Oden::Plugin::* etc.
             my $comment = "$caller[1] at line $caller[2]";
             $comment =~ s/\*\// /g;
             $sql = "/* $comment */\n$sql";
@@ -411,7 +411,7 @@ sub insert {
     $table->row_class->new(
         {
             row_data   => $args,
-            teng       => $self,
+            oden       => $self,
             table_name => $table_name,
         }
     );
@@ -626,7 +626,7 @@ sub single {
         {
             sql        => $sql,
             row_data   => $row,
-            teng       => $self,
+            oden       => $self,
             table      => $table,
             table_name => $table_name,
         }
@@ -646,8 +646,8 @@ sub search_by_sql {
         return;
     }
 
-    my $itr = Teng::Iterator->new(
-        teng             => $self,
+    my $itr = Oden::Iterator->new(
+        oden             => $self,
         sth              => $sth,
         sql              => $sql,
         row_class        => $self->{schema}->get_row_class($table_name),
@@ -685,7 +685,7 @@ sub single_by_sql {
         {
             sql        => $sql,
             row_data   => $row,
-            teng       => $self,
+            oden       => $self,
             table      => $table,
             table_name => $table_name,
         }
@@ -711,7 +711,7 @@ sub new_row_from_hash {
                 sprintf '/* DUMMY QUERY %s->new_row_from_hash created from %s line %d */', ref $self, $caller[1], $caller[2];
             },
             row_data   => $data,
-            teng       => $self,
+            oden       => $self,
             table      => $table,
             table_name => $table_name,
         }
@@ -741,7 +741,7 @@ sub handle_error {
     $stmt =~ s/\n/\n          /gm;
     Carp::croak sprintf <<"TRACE", $reason, $stmt, Data::Dumper::Dumper($bind);
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@ Teng 's Exception @@@@@
+@@@@@ Oden 's Exception @@@@@
 Reason  : %s
 SQL     : %s
 BIND    : %s
@@ -762,7 +762,7 @@ sub DESTROY {
 __END__
 =head1 NAME
 
-Teng - very simple DBI wrapper/ORMapper
+Oden - very simple DBI wrapper/ORMapper
 
 =head1 SYNOPSIS
 
@@ -773,7 +773,7 @@ Teng - very simple DBI wrapper/ORMapper
 
 =head1 DESCRIPTION
 
-Teng is very simple DBI wrapper and simple O/R Mapper.
+Oden is very simple DBI wrapper and simple O/R Mapper.
 It aims to be lightweight, with minimal dependencies so it's easier to install. 
 
 =head1 BASIC USAGE
@@ -781,14 +781,14 @@ It aims to be lightweight, with minimal dependencies so it's easier to install.
 create your db model base class.
 
     package Your::Model;
-    use parent 'Teng';
+    use parent 'Oden';
     1;
     
 create your db schema class.
-See Teng::Schema for docs on defining schema class.
+See Oden::Schema for docs on defining schema class.
 
     package Your::Model::Schema;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     table {
         name 'user';
         pk 'id';
@@ -800,40 +800,40 @@ in your script.
 
     use Your::Model;
     
-    my $teng = Your::Model->new(\%args);
+    my $oden = Your::Model->new(\%args);
     # insert new record.
-    my $row = $teng->insert('user',
+    my $row = $oden->insert('user',
         {
             id   => 1,
         }
     );
     $row->update({name => 'nekokak'}); # same do { $row->name('nekokak'); $row->update; }
 
-    $row = $teng->single_by_sql(q{SELECT id, name FROM user WHERE id = ?}, [ 1 ]);
+    $row = $oden->single_by_sql(q{SELECT id, name FROM user WHERE id = ?}, [ 1 ]);
     $row->delete();
 
 =head1 ARCHITECTURE
 
-Teng classes are comprised of three distinct components:
+Oden classes are comprised of three distinct components:
 
 =head2 MODEL
 
 The C<model> is where you say 
 
     package MyApp::Model;
-    use parent 'Teng';
+    use parent 'Oden';
 
-This is the entry point to using Teng. You connect, insert, update, delete, select stuff using this object.
+This is the entry point to using Oden. You connect, insert, update, delete, select stuff using this object.
 
 =head2 SCHEMA
 
 The C<schema> is a simple class that describes your table definitions. Note that this is different from DBIx::Class terms.
-DBIC's schema is equivalent to Teng's model + schema, where the actual schema information is scattered across the result classes.
+DBIC's schema is equivalent to Oden's model + schema, where the actual schema information is scattered across the result classes.
 
-In Teng, you simply use Teng::Schema's domain specific language to define a set of tables
+In Oden, you simply use Oden::Schema's domain specific language to define a set of tables
 
     package MyApp::Model::Schema;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name $table_name;
@@ -850,25 +850,25 @@ In Teng, you simply use Teng::Schema's domain specific language to define a set 
 =head2 ROW
 
 Unlike DBIx::Class, you don't need to have a set of classes that represent a row type (i.e. "result" classes in DBIC terms).
-In Teng, the row objects are blessed into anonymous classes that inherit from Teng::Row,
+In Oden, the row objects are blessed into anonymous classes that inherit from Oden::Row,
 so you don't have to create these classes if you just want to use some simple queries.
 
 If you want to define methods to be performed by your row objects, simply create a row class like so:
 
     package MyApp::Model::Row::Camelizedtable_name;
-    use parent qw(Teng::Row);
+    use parent qw(Oden::Row);
 
 Note that your table name will be camelized.
 
 =head1 METHODS
 
-Teng provides a number of methods to all your classes, 
+Oden provides a number of methods to all your classes, 
 
 =over
 
-=item $teng = Teng->new(\%args)
+=item $oden = Oden->new(\%args)
 
-Creates a new Teng instance.
+Creates a new Oden instance.
 
     # connect new database connection.
     my $db = Your::Model->new(
@@ -903,7 +903,7 @@ specific DBI.pm's FetchHashKeyName.
 
 =item * C<schema>
 
-Specifies the Teng::Schema instance to use.
+Specifies the Oden::Schema instance to use.
 If not specified, the value specified in C<schema_class> is loaded and
 instantiated for you.
 
@@ -943,8 +943,8 @@ with SQL::Maker.
 Specified C<sql_builder_class> is instantiated with following:
 
     $sql_builder_class->new(
-        driver => $teng->{driver_name},
-        %{ $teng->{sql_builder_args}  }
+        driver => $oden->{driver_name},
+        %{ $oden->{sql_builder_args}  }
     )
 
 This is not used when C<sql_builder> is specified.
@@ -955,11 +955,11 @@ Speficies the arguments for constructor of C<sql_builder_class>. This is not use
 
 =back
 
-=item C<$row = $teng-E<gt>insert($table_name, \%row_data)>
+=item C<$row = $oden-E<gt>insert($table_name, \%row_data)>
 
 Inserts a new record. Returns the inserted row object.
 
-    my $row = $teng->insert('user',{
+    my $row = $oden->insert('user',{
         id   => 1,
         name => 'nekokak',
     });
@@ -968,17 +968,17 @@ If a primary key is available, it will be fetched after the insert -- so
 an INSERT followed by SELECT is performed. If you do not want this, use
 C<fast_insert>.
 
-=item C<$last_insert_id = $teng-E<gt>fast_insert($table_name, \%row_data);>
+=item C<$last_insert_id = $oden-E<gt>fast_insert($table_name, \%row_data);>
 
 insert new record and get last_insert_id.
 
 no creation row object.
 
-=item C<< $teng->do_insert >>
+=item C<< $oden->do_insert >>
 
 Internal method called from C<insert> and C<fast_insert>. You can hook it on your responsibility.
 
-=item C<$teng-E<gt>bulk_insert($table_name, \@rows_data, \%opt)>
+=item C<$oden-E<gt>bulk_insert($table_name, \@rows_data, \%opt)>
 
 Accepts either an arrayref of hashrefs.
 each hashref should be a structure suitable
@@ -1006,11 +1006,11 @@ example:
 
 You can specify C<$opt> like C<< { prefix => 'INSERT IGNORE INTO' } >> or C<< { update => { name => 'updated' } } >> optionally, which will be passed to query builder.
 
-=item C<$update_row_count = $teng-E<gt>update($table_name, \%update_row_data, [\%update_condition])>
+=item C<$update_row_count = $oden-E<gt>update($table_name, \%update_row_data, [\%update_condition])>
 
 Calls UPDATE on C<$table_name>, with values specified in C<%update_ro_data>, and returns the number of rows updated. You may optionally specify C<%update_condition> to create a conditional update query.
 
-    my $update_row_count = $teng->update('user',
+    my $update_row_count = $oden->update('user',
         {
             name => 'nomaneko',
         },
@@ -1022,91 +1022,91 @@ Calls UPDATE on C<$table_name>, with values specified in C<%update_ro_data>, and
 
 You can also call update on a row object:
 
-    my $row = $teng->single('user',{id => 1});
+    my $row = $oden->single('user',{id => 1});
     $row->update({name => 'nomaneko'});
 
 You can use the set_column method:
 
-    my $row = $teng->single('user', {id => 1});
+    my $row = $oden->single('user', {id => 1});
     $row->set_column( name => 'yappo' );
     $row->update;
 
 you can column update by using column method:
 
-    my $row = $teng->single('user', {id => 1});
+    my $row = $oden->single('user', {id => 1});
     $row->name('yappo');
     $row->update;
 
-=item C<$updated_row_count = $teng-E<gt>do_update($table_name, \%set, \%where)>
+=item C<$updated_row_count = $oden-E<gt>do_update($table_name, \%set, \%where)>
 
 This is low level API for UPDATE. Normally, you should use update method instead of this.
 
 This method does not deflate \%args.
 
-=item C<$delete_row_count = $teng-E<gt>delete($table, \%delete_condition)>
+=item C<$delete_row_count = $oden-E<gt>delete($table, \%delete_condition)>
 
 Deletes the specified record(s) from C<$table> and returns the number of rows deleted. You may optionally specify C<%delete_condition> to create a conditional delete query.
 
-    my $rows_deleted = $teng->delete( 'user', {
+    my $rows_deleted = $oden->delete( 'user', {
         id => 1
     } );
     # Executes DELETE FROM user WHERE id = 1
 
 You can also call delete on a row object:
 
-    my $row = $teng->single('user', {id => 1});
+    my $row = $oden->single('user', {id => 1});
     $row->delete
 
-=item C<$itr = $teng-E<gt>search($table_name, [\%search_condition, [\%search_attr]])>
+=item C<$itr = $oden-E<gt>search($table_name, [\%search_condition, [\%search_attr]])>
 
 simple search method.
-search method get Teng::Iterator's instance object.
+search method get Oden::Iterator's instance object.
 
-see L<Teng::Iterator>
+see L<Oden::Iterator>
 
 get iterator:
 
-    my $itr = $teng->search('user',{id => 1},{order_by => 'id'});
+    my $itr = $oden->search('user',{id => 1},{order_by => 'id'});
 
 get rows:
 
-    my @rows = $teng->search('user',{id => 1},{order_by => 'id'});
+    my @rows = $oden->search('user',{id => 1},{order_by => 'id'});
 
-=item C<$row = $teng-E<gt>single($table_name, \%search_condition)>
+=item C<$row = $oden-E<gt>single($table_name, \%search_condition)>
 
 get one record.
 give back one case of the beginning when it is acquired plural records by single method.
 
-    my $row = $teng->single('user',{id =>1});
+    my $row = $oden->single('user',{id =>1});
 
-=item C<$row = $teng-E<gt>new_row_from_hash($table_name, \%row_data, [$sql])>
+=item C<$row = $oden-E<gt>new_row_from_hash($table_name, \%row_data, [$sql])>
 
 create row object from data. (not fetch from db.)
 It's useful in such as testing.
 
-    my $row = $teng->new_row_from_hash('user', { id => 1, foo => "bar" });
+    my $row = $oden->new_row_from_hash('user', { id => 1, foo => "bar" });
     say $row->foo; # say bar
 
-=item C<$itr = $teng-E<gt>search_named($sql, [\%bind_values, [$table_name]])>
+=item C<$itr = $oden-E<gt>search_named($sql, [\%bind_values, [$table_name]])>
 
 execute named query
 
-    my $itr = $teng->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
+    my $itr = $oden->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
 
 If you give ArrayRef to value, that is expanded to "(?,?,?,?)" in SQL.
 It's useful in case use IN statement.
 
     # SELECT * FROM user WHERE id IN (?,?,?);
     # bind [1,2,3]
-    my $itr = $teng->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
+    my $itr = $oden->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
 
-If you give table_name. It is assumed the hint that makes Teng::Row's Object.
+If you give table_name. It is assumed the hint that makes Oden::Row's Object.
 
-=item C<$itr = $teng-E<gt>search_by_sql($sql, [\@bind_values, [$table_name]])>
+=item C<$itr = $oden-E<gt>search_by_sql($sql, [\@bind_values, [$table_name]])>
 
 execute your SQL
 
-    my $itr = $teng->search_by_sql(q{
+    my $itr = $oden->search_by_sql(q{
         SELECT
             id, name
         FROM
@@ -1118,41 +1118,41 @@ execute your SQL
 If $table is specified, it set table information to result iterator.
 So, you can use table row class to search_by_sql result.
 
-=item C<$row = $teng-E<gt>single_by_sql($sql, [\@bind_values, [$table_name]])>
+=item C<$row = $oden-E<gt>single_by_sql($sql, [\@bind_values, [$table_name]])>
 
 get one record from your SQL.
 
-    my $row = $teng->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
+    my $row = $oden->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
 
 This is a shortcut for
 
-    my $row = $teng->search_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user')->next;
+    my $row = $oden->search_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user')->next;
 
 But optimized implementation.
 
-=item C<$row = $teng-E<gt>single_named($sql, [\%bind_values, [$table_name]])>
+=item C<$row = $oden-E<gt>single_named($sql, [\%bind_values, [$table_name]])>
 
 get one record from execute named query
 
-    my $row = $teng->single_named(q{SELECT id,name FROM user WHERE id = :id LIMIT 1}, {id => 1}, 'user');
+    my $row = $oden->single_named(q{SELECT id,name FROM user WHERE id = :id LIMIT 1}, {id => 1}, 'user');
 
 This is a shortcut for
 
-    my $row = $teng->search_named(q{SELECT id,name FROM user WHERE id = :id LIMIT 1}, {id => 1}, 'user')->next;
+    my $row = $oden->search_named(q{SELECT id,name FROM user WHERE id = :id LIMIT 1}, {id => 1}, 'user')->next;
 
 But optimized implementation.
 
-=item C<$sth = $teng-E<gt>execute($sql, [\@bind_values])>
+=item C<$sth = $oden-E<gt>execute($sql, [\@bind_values])>
 
 execute query and get statement handler.
-and will be inserted caller's file and line as a comment in the SQL if $ENV{TENG_SQL_COMMENT} or sql_comment is true value.
+and will be inserted caller's file and line as a comment in the SQL if $ENV{ODEN_SQL_COMMENT} or sql_comment is true value.
 
-=item C<$teng-E<gt>txn_scope>
+=item C<$oden-E<gt>txn_scope>
 
 Creates a new transaction scope guard object.
 
     do {
-        my $txn = $teng->txn_scope;
+        my $txn = $oden->txn_scope;
 
         $row->update({foo => 'bar'});
 
@@ -1167,35 +1167,35 @@ about calling L</txn_rollback> at the right places. Note that since there
 is no defined code closure, there will be no retries and other magic upon
 database disconnection.
 
-=item C<$txn_manager = $teng-E<gt>txn_manager>
+=item C<$txn_manager = $oden-E<gt>txn_manager>
 
 Create the transaction manager instance with specified C<txn_manager_class>.
 
-=item C<$teng-E<gt>txn_begin>
+=item C<$oden-E<gt>txn_begin>
 
 start new transaction.
 
-=item C<$teng-E<gt>txn_commit>
+=item C<$oden-E<gt>txn_commit>
 
 commit transaction.
 
-=item C<$teng-E<gt>txn_rollback>
+=item C<$oden-E<gt>txn_rollback>
 
 rollback transaction.
 
-=item C<$teng-E<gt>txn_end>
+=item C<$oden-E<gt>txn_end>
 
 finish transaction.
 
-=item C<$teng-E<gt>do($sql, [\%option, @bind_values])>
+=item C<$oden-E<gt>do($sql, [\%option, @bind_values])>
 
 Execute the query specified by C<$sql>, using C<%option> and C<@bind_values> as necessary. This pretty much a wrapper around L<http://search.cpan.org/dist/DBI/DBI.pm#do>
 
-=item C<$teng-E<gt>dbh>
+=item C<$oden-E<gt>dbh>
 
 get database handle.
 
-=item C<$teng-E<gt>connect(\@connect_info)>
+=item C<$oden-E<gt>connect(\@connect_info)>
 
 connect database handle.
 
@@ -1203,42 +1203,42 @@ connect_info is [$dsn, $user, $password, $options].
 
 If you give \@connect_info, create new database connection.
 
-=item C<$teng-E<gt>disconnect()>
+=item C<$oden-E<gt>disconnect()>
 
 Disconnects from the currently connected database.
 
-=item C<$teng-E<gt>suppress_row_objects($flag)>
+=item C<$oden-E<gt>suppress_row_objects($flag)>
 
 set row object creation mode.
 
-=item C<$teng-E<gt>apply_sql_types($flag)>
+=item C<$oden-E<gt>apply_sql_types($flag)>
 
 set SQL type application mode.
 
-see apply_sql_types in L<Teng::Iterator/METHODS>
+see apply_sql_types in L<Oden::Iterator/METHODS>
 
-=item C<$teng-E<gt>guess_sql_types($flag)>
+=item C<$oden-E<gt>guess_sql_types($flag)>
 
 set SQL type guessing mode.
 this implies apply_sql_types true.
 
-see guess_sql_types in L<Teng::Iterator/METHODS>
+see guess_sql_types in L<Oden::Iterator/METHODS>
 
-=item C<$teng-E<gt>set_boolean_value($true, $false)>
+=item C<$oden-E<gt>set_boolean_value($true, $false)>
 
 set scalar to correspond boolean.
 this is ignored when apply_sql_types is not true.
 
-  $teng->set_boolean_value(JSON::XS::true, JSON::XS::false);
+  $oden->set_boolean_value(JSON::XS::true, JSON::XS::false);
 
-=item C<$teng-E<gt>load_plugin();>
+=item C<$oden-E<gt>load_plugin();>
 
- $teng->load_plugin($plugin_class, $options);
+ $oden->load_plugin($plugin_class, $options);
 
-This imports plugin class's methods to C<$teng> class
+This imports plugin class's methods to C<$oden> class
 and it calls $plugin_class's init method if it has.
 
- $plugin_class->init($teng, $options);
+ $plugin_class->init($oden, $options);
 
 If you want to change imported method name, use C<alias> option.
 for example:
@@ -1247,19 +1247,19 @@ for example:
 
 BulkInsert's "bulk_insert" method is imported as "insert_bulk".
 
-=item C<$teng-E<gt>handle_error>
+=item C<$oden-E<gt>handle_error>
 
 handling error method.
 
-=item C<< $teng->connected >>
+=item C<< $oden->connected >>
 
 check connected or not.
 
-=item C<< $teng->reconnect >>
+=item C<< $oden->reconnect >>
 
 reconnect database
 
-=item C<< $teng->mode >>
+=item C<< $oden->mode >>
 
 DEPRECATED AND *WILL* BE REMOVED. PLEASE USE C< no_ping > option.
 
@@ -1271,7 +1271,7 @@ use L<Devel::KYTProf>.
 
 =head1 TRIGGERS
 
-Teng does not support triggers (NOTE: do not confuse it with SQL triggers - we're talking about Perl level triggers). If you really want to hook into the various methods, use something like L<Moose>, L<Mouse>, and L<Class::Method::Modifiers>.
+Oden does not support triggers (NOTE: do not confuse it with SQL triggers - we're talking about Perl level triggers). If you really want to hook into the various methods, use something like L<Moose>, L<Mouse>, and L<Class::Method::Modifiers>.
 
 =head1 SEE ALSO
 
@@ -1300,11 +1300,11 @@ Daisuke Maki C<< <daisuke@endeworks.jp> >>
 
 =head1 REPOSITORY
 
-  git clone git://github.com/nekokak/p5-teng.git  
+  git clone git://github.com/nekokak/p5-oden.git  
 
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2010, the Teng L</AUTHOR>. All rights reserved.
+Copyright (c) 2010, the Oden L</AUTHOR>. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.

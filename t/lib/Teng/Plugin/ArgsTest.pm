@@ -1,5 +1,5 @@
 package
-  Teng::Plugin::ArgsTest;
+  Oden::Plugin::ArgsTest;
 
 use strict;
 use warnings;

@@ -7,11 +7,11 @@ use Test::Mock::Guard qw/mock_guard/;
 
 {
     package Bench;
-    use parent 'Teng';
+    use parent 'Oden';
     __PACKAGE__->load_plugin('Lookup');
 
     package Bench::Schema;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
     table {
         name 'user';
         pk   'id';

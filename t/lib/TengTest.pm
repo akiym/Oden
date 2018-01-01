@@ -1,6 +1,6 @@
-package TengTest;
+package OdenTest;
 use strict;
-use parent qw(Teng);
+use parent qw(Oden);
 
 sub prepare_db {
     my ( $class, $dbh ) = @_;

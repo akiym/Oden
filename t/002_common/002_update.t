@@ -15,13 +15,13 @@ subtest 'update mock_basic data' => sub {
     ok $db->update('mock_basic',{name => 'python'},{id => 1});
     my $row = $db->single('mock_basic',{id => 1});
 
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'python';
 };
 
 subtest 'row object update' => sub {
     my $row = $db->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'python';
 
     ok $row->update({name => 'perl'});
@@ -32,7 +32,7 @@ subtest 'row object update' => sub {
 
 subtest 'row object is_changed' => sub {
     my $row = $db->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
     ok !$row->is_changed;
 
@@ -46,7 +46,7 @@ subtest 'row object is_changed' => sub {
 
 subtest 'row data set and update' => sub {
     my $row = $db->single('mock_basic',{id => 1});
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
 
     $row->set_columns({name => 'ruby'});
@@ -94,7 +94,7 @@ subtest 'update primary key' => sub {
     ok !$db->single('mock_basic',{id => 3});
 
     my $new_row = $db->single('mock_basic',{id => 999});
-    isa_ok $new_row, 'Teng::Row';
+    isa_ok $new_row, 'Oden::Row';
     is $row->id, 999;
     is $row->name, 'php';
 };

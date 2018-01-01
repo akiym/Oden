@@ -3,8 +3,8 @@ use warnings;
 use xt::Utils::postgresql;
 use Test::More;
 
-use Teng;
-use Teng::Schema::Loader;
+use Oden;
+use Oden::Schema::Loader;
 
 eval q{
     require DBD::Pg;
@@ -25,12 +25,12 @@ $dbh->do(q{
     );        
 });
 
-my $db = Teng::Schema::Loader->load(
+my $db = Oden::Schema::Loader->load(
     dbh => $dbh,
     namespace => 'Mock::DB',
 );
 
-isa_ok( $db, 'Teng' );
+isa_ok( $db, 'Oden' );
 
 my $binary = "\x21\x00\x21";
 

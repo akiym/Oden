@@ -14,7 +14,7 @@ sub import {
 sub prepare_db {
     my ( $schema_class, $dbh ) = @_;
 
-    if ( ! $schema_class->isa( 'TengTest' ) ) {
+    if ( ! $schema_class->isa( 'OdenTest' ) ) {
         die "Don't know how to setup $schema_class";
     }
     $schema_class->prepare_db( $dbh );

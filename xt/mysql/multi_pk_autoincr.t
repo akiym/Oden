@@ -3,7 +3,7 @@ use Test::More;
 
 {
     package Mock::MultiPK;
-    use parent 'Teng';
+    use parent 'Oden';
 
     sub setup_test_db {
         my $self = shift;
@@ -28,7 +28,7 @@ use Test::More;
 
     package Mock::MultiPK::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name 'multi_pk_table';

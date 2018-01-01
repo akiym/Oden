@@ -1,4 +1,4 @@
-package Teng::Iterator;
+package Oden::Iterator;
 use strict;
 use warnings;
 use Carp ();
@@ -20,7 +20,7 @@ sub next {
     my $row;
     if ($self->{sth}) {
         $row = $self->{sth}->fetchrow_hashref;
-        $self->{select_columns} ||= $self->{sth}->{$self->{teng}->{fields_case}};
+        $self->{select_columns} ||= $self->{sth}->{$self->{oden}->{fields_case}};
         unless ( $row ) {
             $self->{sth}->finish;
             $self->{sth} = undef;
@@ -38,7 +38,7 @@ sub next {
             {
                 sql            => $self->{sql},
                 row_data       => $row,
-                teng           => $self->{teng},
+                oden           => $self->{oden},
                 table          => $self->{table},
                 table_name     => $self->{table_name},
                 select_columns => $self->{select_columns},
@@ -66,11 +66,11 @@ sub _apply_sql_types {
                ) {
                 $row->{$column} += 0;
             } elsif ($type == SQL_BOOLEAN) {
-                if ($self->{teng}->{boolean_value}) {
+                if ($self->{oden}->{boolean_value}) {
                     if ($row->{$column}) {
-                        $row->{$column} = $self->{teng}->{boolean_value}->{true};
+                        $row->{$column} = $self->{oden}->{boolean_value}->{true};
                     } else {
-                        $row->{$column} = $self->{teng}->{boolean_value}->{false};
+                        $row->{$column} = $self->{oden}->{boolean_value}->{false};
                     }
                 } else {
                     $row->{$column} += 0;
@@ -94,7 +94,7 @@ sub all {
     my $result = [];
 
     if ($self->{sth}) {
-        $self->{select_columns} ||= $self->{sth}->{$self->{teng}->{fields_case}};
+        $self->{select_columns} ||= $self->{sth}->{$self->{oden}->{fields_case}};
         $result = $self->{sth}->fetchall_arrayref(+{});
         $self->{sth}->finish;
         $self->{sth} = undef;
@@ -105,7 +105,7 @@ sub all {
                     {
                         sql            => $self->{sql},
                         row_data       => $_,
-                        teng           => $self->{teng},
+                        oden           => $self->{oden},
                         table          => $self->{table},
                         table_name     => $self->{table_name},
                         select_columns => $self->{select_columns},
@@ -123,11 +123,11 @@ sub all {
 __END__
 =head1 NAME
 
-Teng::Iterator - Iterator for Teng
+Oden::Iterator - Iterator for Oden
 
 =head1 DESCRIPTION
 
-This is an iterator class for L<Teng>.
+This is an iterator class for L<Oden>.
 
 =head1 SYNOPSIS
 
@@ -144,9 +144,9 @@ This is an iterator class for L<Teng>.
 
 =over
 
-=item $itr = Teng::Iterator->new()
+=item $itr = Oden::Iterator->new()
 
-Create new Teng::Iterator's object. You may not call this method directly.
+Create new Oden::Iterator's object. You may not call this method directly.
 
 =item my $row = $itr->next();
 

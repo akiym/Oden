@@ -21,10 +21,10 @@ $db->insert('mock_basic',{
 
 subtest 'search' => sub {
     my $itr = $db->search('mock_basic',{id => 1});
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     is $row->id, 1;
     is $row->name, 'perl';
@@ -37,10 +37,10 @@ subtest 'search' => sub {
 
 subtest 'search with columns opts' => sub {
     my $itr = $db->search('mock_basic',{id => 1}, +{columns => [qw/id/]});
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     is $row->id, 1;
     is_deeply $row->get_columns, +{
@@ -50,10 +50,10 @@ subtest 'search with columns opts' => sub {
 
 subtest 'search with +columns opts' => sub {
     my $itr = $db->search('mock_basic',{id => 1}, +{'+columns' => [\'id+20 as calc']});
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     is $row->id, 1;
     is_deeply $row->get_columns, +{
@@ -68,14 +68,14 @@ subtest 'search without where' => sub {
     my $itr = $db->search('mock_basic');
 
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
 
     is $row->id, 1;
     is $row->name, 'perl';
 
     my $row2 = $itr->next;
 
-    isa_ok $row2, 'Teng::Row';
+    isa_ok $row2, 'Oden::Row';
 
     is $row2->id, 2;
     is $row2->name, 'python';
@@ -83,27 +83,27 @@ subtest 'search without where' => sub {
 
 subtest 'search with order_by (originally)' => sub {
     my $itr = $db->search('mock_basic', {}, { order_by => [ { id => 'desc' } ] });
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id, 3;
     is $row->name, 'java';
 };
 
 subtest 'search with order_by (as hashref)' => sub {
     my $itr = $db->search('mock_basic', {}, { order_by => { id => 'desc' } });
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id, 3;
     is $row->name, 'java';
 };
 
 subtest 'search with order_by (as string)' => sub {
     my $itr = $db->search('mock_basic', {}, { order_by => 'name' });
-    isa_ok $itr, 'Teng::Iterator';
+    isa_ok $itr, 'Oden::Iterator';
     my $row = $itr->next;
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id, 3;
     is $row->name, 'java';
 };

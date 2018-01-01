@@ -1,7 +1,7 @@
 package Mock::BasicBindColumn::Schema;
 use strict;
 use warnings;
-use Teng::Schema::Declare;
+use Oden::Schema::Declare;
 use DBI qw/:sql_types/;
 
 table {

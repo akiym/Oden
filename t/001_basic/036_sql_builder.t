@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Teng;
+use Oden;
 use Test::More;
 
 use t::Utils;
@@ -10,18 +10,18 @@ use Test::More;
 my $dbh = t::Utils->setup_dbh;
 
 subtest "default" => sub {
-    my $teng = Mock::Basic->new({dbh => $dbh});
-    isa_ok $teng->{sql_builder}, 'SQL::Maker';
+    my $oden = Mock::Basic->new({dbh => $dbh});
+    isa_ok $oden->{sql_builder}, 'SQL::Maker';
 };
 
 subtest "sql_builder_class" => sub {
-    my $teng = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder'});
-    isa_ok $teng->{sql_builder}, 'My::SQL::Builder';
+    my $oden = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder'});
+    isa_ok $oden->{sql_builder}, 'My::SQL::Builder';
 };
 
 subtest "sql_builder_args" => sub {
-    my $teng = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder', sql_builder_args => { strict => 1 }});
-    ok $teng->{sql_builder}->{strict};
+    my $oden = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder', sql_builder_args => { strict => 1 }});
+    ok $oden->{sql_builder}->{strict};
 };
 
 done_testing;

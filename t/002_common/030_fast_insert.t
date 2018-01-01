@@ -24,7 +24,7 @@ subtest 'fast_insert returning last_insert_id' => sub {
 };
 
 subtest 'fast_insert returning mysql_insertid when sth has mysql_insertid' => sub {
-    my $guard = mock_guard('Teng' => {
+    my $guard = mock_guard('Oden' => {
         do_insert => { mysql_insertid => 3 },
     });
 

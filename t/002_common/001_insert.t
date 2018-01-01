@@ -13,7 +13,7 @@ subtest 'insert mock_basic data/ insert method' => sub {
         id   => 1,
         name => 'perl',
     });
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
 };
 
@@ -22,7 +22,7 @@ subtest 'insert with strict sql builder' => sub {
         id   => 5,
         name => 'python',
     });
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'python';
 };
 
@@ -76,7 +76,7 @@ subtest 'insert returning row for mysql_insertid when sth has mysql_insertid' =>
         name => 'python',
     });
 
-    my $guard = mock_guard('Teng' => {
+    my $guard = mock_guard('Oden' => {
         do_insert => { mysql_insertid => 999 },
     });
 

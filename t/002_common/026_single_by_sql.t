@@ -13,7 +13,7 @@ $db->insert('mock_basic',{
 
 subtest 'single_by_sql' => sub {
     my $row = $db->single_by_sql('SELECT * from mock_basic where id = ?', [1], 'mock_basic');
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->id, 1;
     is $row->name, 'perl';
 };

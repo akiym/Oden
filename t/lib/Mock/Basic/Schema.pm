@@ -1,6 +1,6 @@
 package Mock::Basic::Schema;
 use utf8;
-use Teng::Schema::Declare;
+use Oden::Schema::Declare;
 use DBI qw(:sql_types);
 
 table {

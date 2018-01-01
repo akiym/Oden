@@ -9,7 +9,7 @@ use Test::More;
 use lib './t';
 use Mock::Basic;
 
-use Teng;
+use Oden;
 use DBIx::Tracer;
 
 my $dbh = t::Utils->setup_dbh;
@@ -21,7 +21,7 @@ subtest 'refetch for update' => sub {
         id   => 1,
         name => 'perl',
     });
-    isa_ok $row, 'Teng::Row';
+    isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
 
     my $tracer = DBIx::Tracer->new(sub {
@@ -32,7 +32,7 @@ subtest 'refetch for update' => sub {
     my $refetch_row = $row->refetch({for_update => 1});
     undef $tracer;
 
-    isa_ok $refetch_row, 'Teng::Row';
+    isa_ok $refetch_row, 'Oden::Row';
     is $refetch_row->name, 'perl';
 };
 

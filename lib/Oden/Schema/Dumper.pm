@@ -1,4 +1,4 @@
-package Teng::Schema::Dumper;
+package Oden::Schema::Dumper;
 use strict;
 use warnings;
 use DBIx::Inspector 0.06;
@@ -31,7 +31,7 @@ sub dump {
         $ret .= "use strict;\n";
         $ret .= "use warnings;\n";
         $ret .= "use DBI qw/:sql_types/;\n";
-        $ret .= "use Teng::Schema::Declare;\n";
+        $ret .= "use Oden::Schema::Declare;\n";
         $ret .= "base_row_class '$args{base_row_class}';\n" if $args{base_row_class};
         for my $table_info (sort { $a->name cmp $b->name } $inspector->tables) {
             $ret .= _render_table($table_info, \%args);
@@ -74,15 +74,15 @@ __END__
 
 =head1 NAME
 
-Teng::Schema::Dumper - Schema code generator
+Oden::Schema::Dumper - Schema code generator
 
 =head1 SYNOPSIS
 
     use DBI;
-    use Teng::Schema::Dumper;
+    use Oden::Schema::Dumper;
 
     my $dbh = DBI->connect(@dsn) or die;
-    print Teng::Schema::Dumper->dump(
+    print Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
         inflate   => +{
@@ -110,7 +110,7 @@ Teng::Schema::Dumper - Schema code generator
 
 =head1 DESCRIPTION
 
-This module generates the Perl code to generate L<Teng::Schema> instance.
+This module generates the Perl code to generate L<Oden::Schema> instance.
 
 You can use it by C<do "my/schema.pl"> or embed it to the package.
 
@@ -118,7 +118,7 @@ You can use it by C<do "my/schema.pl"> or embed it to the package.
 
 =over 4
 
-=item C<Teng::Schema::Dumper-E<gt>dump(dbh =E<gt> $dbh, namespace =E<gt> $namespace)>
+=item C<Oden::Schema::Dumper-E<gt>dump(dbh =E<gt> $dbh, namespace =E<gt> $namespace)>
 
 This is the method to generate code from DB. It returns the Perl5 code in string.
 
@@ -132,11 +132,11 @@ Database handle from DBI.
 
 =item C<namespace>
 
-your project Teng namespace.
+your project Oden namespace.
 
 =item C<base_row_class>
 
-Specify the default base row class for L<Teng::Schema::Declare>.
+Specify the default base row class for L<Oden::Schema::Declare>.
 
 =back
 

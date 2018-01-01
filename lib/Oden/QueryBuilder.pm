@@ -1,4 +1,4 @@
-package Teng::QueryBuilder;
+package Oden::QueryBuilder;
 use strict;
 use warnings;
 use utf8;
@@ -11,11 +11,11 @@ __PACKAGE__->load_plugin('InsertMulti');
 __END__
 =head1 NAME
 
-Teng::QueryBuilder
+Oden::QueryBuilder
 
 =head1 DESCRIPTION
 
-Teng SQL builder class.
+Oden SQL builder class.
 
 =head1 SEE ALSO
 

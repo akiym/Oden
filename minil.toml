@@ -1,3 +1,6 @@
+name = "Oden"
 badges = ["travis"]
-authority = "cpan:NEKOKAK"
+authority = "cpan:AKIYM"
+
+module_maker="ModuleBuildTiny"
 

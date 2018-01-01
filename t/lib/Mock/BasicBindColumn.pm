@@ -1,6 +1,6 @@
 package Mock::BasicBindColumn;
 use strict;
-use parent qw/Teng/;
+use parent qw/Oden/;
 
 sub setup_test_db {
     shift->do(q{

@@ -19,7 +19,7 @@ SKIP: {
 
     subtest 'single' => sub {
         my $row = $db->single('mock_basic_camelcase',{Id => 1});
-        isa_ok $row, 'Teng::Row';
+        isa_ok $row, 'Oden::Row';
         is $row->Id, 1;
         is $row->Name, 'perl';
         is_deeply $row->get_columns, +{

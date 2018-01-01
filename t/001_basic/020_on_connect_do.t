@@ -4,7 +4,7 @@ use Test::More;
 {
     package Mock::BasicOnConnectDo;
     our $CONNECTION_COUNTER;
-    use parent qw/Teng/;
+    use parent qw/Oden/;
 
     sub setup_test_db {
         shift->do(q{
@@ -18,7 +18,7 @@ use Test::More;
 
     package Mock::BasicOnConnectDo::Schema;
     use utf8;
-    use Teng::Schema::Declare;
+    use Oden::Schema::Declare;
 
     table {
         name 'mock_basic';
