@@ -4,7 +4,6 @@ use warnings;
 use utf8;
 use Carp ();
 use DBI;
-use Oden::Iterator;
 use Data::Page::NoTotalEntries 0.02;
 
 our @EXPORT = qw/search_with_pager/;
@@ -35,20 +34,7 @@ sub search_with_pager {
             offset => $rows * ($page - 1),
         });
 
-    my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
-    $sth->execute(@binds) or Carp::croak $self->dbh->errstr;
-
-    my $ret = [
-        Oden::Iterator->new(
-            oden                     => $self,
-            sth                      => $sth,
-            sql                      => $sql,
-            row_class                => $self->schema->get_row_class($table_name),
-            table                    => $table,
-            table_name               => $table_name,
-            suppress_object_creation => $self->suppress_row_objects,
-        )->all
-    ];
+    my $ret = $self->search_by_sql($sql, \@binds, $table_name);
 
     my $has_next = ($rows + 1 == scalar(@$ret)) ? 1 : 0;
     if ($has_next) { pop @$ret }

@@ -17,18 +17,7 @@ sub search_by_sql_with_pager {
 
     $sql .= " LIMIT @{[ $entries_per_page + 1 ]} OFFSET $offset";
 
-    my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
-    $sth->execute(@$binds) or Carp::croak $self->dbh->errstr;
-
-    my $itr = Oden::Iterator->new(
-        oden                     => $self,
-        sth                      => $sth,
-        sql                      => $sql,
-        row_class                => $self->schema->get_row_class($table_name),
-        table_name               => $table_name,
-        suppress_object_creation => $self->suppress_row_objects,
-    );
-    my $rows     = $itr->all;
+    my $rows = $self->search_by_sql($sql, $binds, $table_name);
     my $has_next = 0;
     if (@$rows == $entries_per_page + 1) {
         pop @$rows;

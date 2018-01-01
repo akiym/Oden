@@ -12,13 +12,24 @@ $db->insert_and_select(
     });
 
 subtest 'search_by_sql' => sub {
-    my $itr = $db->search_by_sql(q{SELECT * FROM mock_basic WHERE id = ?}, [1]);
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $db->search_by_sql(q{SELECT * FROM mock_basic WHERE id = ?}, [1]);
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
     is $row->id,   1;
     is $row->name, 'perl';
+};
+
+subtest 'suppress_row_objects' => sub {
+    $db->suppress_row_objects(1);
+    my $rows = $db->search_by_sql(q{SELECT * FROM mock_basic WHERE id = ?}, [1]);
+
+    my $row = $rows->[0];
+    is_deeply $row, {
+        id        => 1,
+        name      => 'perl',
+        delete_fg => 0,
+    };
 };
 
 done_testing;

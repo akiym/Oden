@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use utf8;
 use Data::Page;
-use Oden::Iterator;
 use Carp ();
 
 our @EXPORT = qw/search_with_pager/;
@@ -31,26 +30,16 @@ sub search_with_pager {
             offset => $rows * ($page - 1),
             prefix => 'SELECT SQL_CALC_FOUND_ROWS ',
         });
-    my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
-    $sth->execute(@binds) or Carp::croak $self->dbh->errstr;
-    my $total_entries = $self->dbh->selectrow_array(q{SELECT FOUND_ROWS()});
 
-    my $itr = Oden::Iterator->new(
-        oden                     => $self,
-        sth                      => $sth,
-        sql                      => $sql,
-        row_class                => $self->schema->get_row_class($table_name),
-        table                    => $table,
-        table_name               => $table_name,
-        suppress_object_creation => $self->suppress_row_objects,
-    );
+    my $ret = $self->search_by_sql($sql, \@binds, $table_name);
+    my $total_entries = $self->dbh->selectrow_array(q{SELECT FOUND_ROWS()});
 
     my $pager = Data::Page->new();
     $pager->entries_per_page($rows);
     $pager->current_page($page);
     $pager->total_entries($total_entries);
 
-    return ($itr->all, $pager);
+    return ($ret, $pager);
 }
 
 1;

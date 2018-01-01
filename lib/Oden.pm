@@ -7,7 +7,6 @@ use DBI 1.33;
 use Scalar::Util;
 use SQL::Maker::SQLType qw(sql_type);
 use Oden::Row;
-use Oden::Iterator;
 use Oden::Schema;
 use DBIx::TransactionManager 1.06;
 use Oden::QueryBuilder;
@@ -23,8 +22,6 @@ use Class::Accessor::Lite 0.05 rw => [
         owner_pid
         no_ping
         fields_case
-        apply_sql_types
-        guess_sql_types
     )
 ];
 
@@ -58,7 +55,6 @@ sub new {
         owner_pid     => $$,
         no_ping       => 0,
         fields_case   => 'NAME_lc',
-        boolean_value => {true => 1, false => 0},
         %args,
     }, $class;
 
@@ -84,15 +80,6 @@ sub new {
     }
 
     return $self;
-}
-
-sub set_boolean_value {
-    my $self = shift;
-    if (@_) {
-        my ($true, $false) = @_;
-        $self->{boolean_value} = {true => $true, false => $false};
-    }
-    return $self->{boolean_value};
 }
 
 # forcefully connect
@@ -603,25 +590,35 @@ sub search_by_sql {
     $table_name ||= $self->_guess_table_name($sql);
     my $sth = $self->execute($sql, $bind);
 
-    # When the return value is never used, should not create iterator object
+    # When the return value is never used, should not create rows
     # case example: use `FOR UPDATE` query for global locking
     unless (defined wantarray) {
-        $sth->finish();
+        $sth->finish;
         return;
     }
 
-    my $itr = Oden::Iterator->new(
-        oden                     => $self,
-        sth                      => $sth,
-        sql                      => $sql,
-        row_class                => $self->{schema}->get_row_class($table_name),
-        table                    => $self->{schema}->get_table($table_name),
-        table_name               => $table_name,
-        apply_sql_types          => $self->{apply_sql_types} || $self->{guess_sql_types},
-        guess_sql_types          => $self->{guess_sql_types},
-        suppress_object_creation => $self->{suppress_row_objects},
-    );
-    return $itr->all;
+    my $rows = $sth->fetchall_arrayref(+{});
+    $sth->finish;
+
+    if (!$self->{suppress_row_objects}) {
+        my $select_columns = $sth->{$self->{fields_case}};
+        my $row_class      = $self->{schema}->get_row_class($table_name);
+        my $table          = $self->{schema}->get_table($table_name);
+        $rows = [
+            map {
+                $row_class->new({
+                    sql            => $sql,
+                    row_data       => $_,
+                    oden           => $self,
+                    table          => $table,
+                    table_name     => $table_name,
+                    select_columns => $select_columns,
+                })
+            } @$rows
+        ];
+    }
+
+    return $rows;
 }
 
 sub single_by_sql {
@@ -1067,7 +1064,7 @@ execute your SQL
             id = ?
     },[ 1 ]);
 
-If $table is specified, it set table information to result iterator.
+If $table is specified, it set table information to result rows.
 So, you can use table row class to search_by_sql result.
 
 =item C<$row = $oden-E<gt>single_by_sql($sql, [\@bind_values, [$table_name]])>
@@ -1162,26 +1159,6 @@ Disconnects from the currently connected database.
 =item C<$oden-E<gt>suppress_row_objects($flag)>
 
 set row object creation mode.
-
-=item C<$oden-E<gt>apply_sql_types($flag)>
-
-set SQL type application mode.
-
-see apply_sql_types in L<Oden::Iterator/METHODS>
-
-=item C<$oden-E<gt>guess_sql_types($flag)>
-
-set SQL type guessing mode.
-this implies apply_sql_types true.
-
-see guess_sql_types in L<Oden::Iterator/METHODS>
-
-=item C<$oden-E<gt>set_boolean_value($true, $false)>
-
-set scalar to correspond boolean.
-this is ignored when apply_sql_types is not true.
-
-  $oden->set_boolean_value(JSON::XS::true, JSON::XS::false);
 
 =item C<$oden-E<gt>load_plugin();>
 

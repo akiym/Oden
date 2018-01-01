@@ -292,20 +292,12 @@ Oden provides a number of methods to all your classes,
         my $row = $oden->single('user', {id => 1});
         $row->delete
 
-- `$itr = $oden->search($table_name, [\%search_condition, [\%search_attr]])`
+- `$rows = $oden->search($table_name, [\%search_condition, [\%search_attr]])`
 
     simple search method.
-    search method get Oden::Iterator's instance object.
+    search method get arrayref of Oden::Row's instance object.
 
-    see [Oden::Iterator](https://metacpan.org/pod/Oden::Iterator)
-
-    get iterator:
-
-        my $itr = $oden->search('user',{id => 1},{order_by => 'id'});
-
-    get rows:
-
-        my @rows = $oden->search('user',{id => 1},{order_by => 'id'});
+        my $rows = $oden->search('user',{id => 1},{order_by => 'id'});
 
 - `$row = $oden->single($table_name, \%search_condition)`
 
@@ -322,26 +314,26 @@ Oden provides a number of methods to all your classes,
         my $row = $oden->new_row_from_hash('user', { id => 1, foo => "bar" });
         say $row->foo; # say bar
 
-- `$itr = $oden->search_named($sql, [\%bind_values, [$table_name]])`
+- `$rows = $oden->search_named($sql, [\%bind_values, [$table_name]])`
 
     execute named query
 
-        my $itr = $oden->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
+        my $rows = $oden->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
 
     If you give ArrayRef to value, that is expanded to "(?,?,?,?)" in SQL.
     It's useful in case use IN statement.
 
         # SELECT * FROM user WHERE id IN (?,?,?);
         # bind [1,2,3]
-        my $itr = $oden->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
+        my $rows = $oden->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
 
     If you give table\_name. It is assumed the hint that makes Oden::Row's Object.
 
-- `$itr = $oden->search_by_sql($sql, [\@bind_values, [$table_name]])`
+- `$rows = $oden->search_by_sql($sql, [\@bind_values, [$table_name]])`
 
     execute your SQL
 
-        my $itr = $oden->search_by_sql(q{
+        my $rows = $oden->search_by_sql(q{
             SELECT
                 id, name
             FROM
@@ -350,7 +342,7 @@ Oden provides a number of methods to all your classes,
                 id = ?
         },[ 1 ]);
 
-    If $table is specified, it set table information to result iterator.
+    If $table is specified, it set table information to result rows.
     So, you can use table row class to search\_by\_sql result.
 
 - `$row = $oden->single_by_sql($sql, [\@bind_values, [$table_name]])`
@@ -445,26 +437,6 @@ Oden provides a number of methods to all your classes,
 - `$oden->suppress_row_objects($flag)`
 
     set row object creation mode.
-
-- `$oden->apply_sql_types($flag)`
-
-    set SQL type application mode.
-
-    see apply\_sql\_types in ["METHODS" in Oden::Iterator](https://metacpan.org/pod/Oden::Iterator#METHODS)
-
-- `$oden->guess_sql_types($flag)`
-
-    set SQL type guessing mode.
-    this implies apply\_sql\_types true.
-
-    see guess\_sql\_types in ["METHODS" in Oden::Iterator](https://metacpan.org/pod/Oden::Iterator#METHODS)
-
-- `$oden->set_boolean_value($true, $false)`
-
-    set scalar to correspond boolean.
-    this is ignored when apply\_sql\_types is not true.
-
-        $oden->set_boolean_value(JSON::XS::true, JSON::XS::false);
 
 - `$oden->load_plugin();`
 

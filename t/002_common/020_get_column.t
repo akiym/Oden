@@ -26,7 +26,7 @@ subtest 'get_column' => sub {
 };
 
 subtest 'get_column' => sub {
-    my $row = $db->search_by_sql(q{SELECT id FROM mock_basic LIMIT 1})->next;
+    my $row = $db->search_by_sql(q{SELECT id FROM mock_basic LIMIT 1})->[0];
     isa_ok $row, 'Oden::Row';
 
     eval { $row->get_column('name'); };

@@ -18,26 +18,23 @@ $db->insert_and_select(
     });
 
 subtest 'search_named' => sub {
-    my $itr = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id}, {id => 1});
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id}, {id => 1});
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
     is $row->id,   1;
     is $row->name, 'perl';
 };
 
 subtest 'search_named' => sub {
-    my $itr = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id OR name = :name}, {id => 1, name => 'ruby'});
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $db->search_named(q{SELECT * FROM mock_basic WHERE id = :id OR name = :name}, {id => 1, name => 'ruby'});
 
-    my @row = $itr->all;
-    isa_ok $row[0], 'Oden::Row';
-    is $row[0]->id,   1;
-    is $row[0]->name, 'perl';
-    isa_ok $row[1], 'Oden::Row';
-    is $row[1]->id,   2;
-    is $row[1]->name, 'ruby';
+    isa_ok $rows->[0], 'Oden::Row';
+    is $rows->[0]->id,   1;
+    is $rows->[0]->name, 'perl';
+    isa_ok $rows->[1], 'Oden::Row';
+    is $rows->[1]->id,   2;
+    is $rows->[1]->name, 'ruby';
 };
 
 subtest 'search_named with arrayref' => sub {
@@ -51,7 +48,7 @@ subtest 'search_named with arrayref' => sub {
         $org_code->(@_);
     };
 
-    my $itr = $db->search_named(
+    my $rows = $db->search_named(
         q{
         SELECT * FROM mock_basic
         WHERE (
@@ -60,9 +57,7 @@ subtest 'search_named with arrayref' => sub {
         limit 100
     }, +{ids => [1, 2, 3]});
 
-    isa_ok $itr, 'Oden::Iterator';
-
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
     is $row->id,   1;
     is $row->name, 'perl';
@@ -79,7 +74,7 @@ subtest 'search_named with arrayref' => sub {
 
 subtest 'search_named with non existent bind' => sub {
     eval {
-        my $itr = $db->search_named(
+        $db->search_named(
             q{SELECT * FROM mock_basic WHERE id = :id OR name = :name},
             {id => 1});
     };

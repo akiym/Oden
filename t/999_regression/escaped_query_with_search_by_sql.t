@@ -14,8 +14,7 @@ $db->insert_and_select(
 
 subtest search_by_sql_with_escaped_query => sub {
     my $sql = 'SELECT id, name FROM "mock_basic" WHERE id = ?';
-    my $itr = $db->search_by_sql($sql, [1]);
-    my $row = $itr->next;
+    my $row = $db->search_by_sql($sql, [1])->[0];
 
     is $row->id,   1;
     is $row->name, 'perl';
@@ -23,8 +22,7 @@ subtest search_by_sql_with_escaped_query => sub {
 
 subtest search_by_sql_with_escaped_query => sub {
     my $sql = 'SELECT id, name FROM `mock_basic` WHERE id = ?';
-    my $itr = $db->search_by_sql($sql, [1]);
-    my $row = $itr->next;
+    my $row = $db->search_by_sql($sql, [1])->[0];
 
     is $row->id,   1;
     is $row->name, 'perl';

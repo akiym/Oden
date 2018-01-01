@@ -12,7 +12,7 @@ $db->insert_and_select(
     });
 
 subtest 'update/delete error: no table info' => sub {
-    my $row = $db->search_by_sql(q{SELECT name FROM mock_basic})->next;
+    my $row = $db->search_by_sql(q{SELECT name FROM mock_basic})->[0];
 
     isa_ok $row, 'Oden::Row';
 
@@ -58,7 +58,7 @@ subtest 'update/delete error: table have no pk' => sub {
 };
 
 subtest 'update/delete error: select column has no primary key' => sub {
-    my $row = $db->search_by_sql('select name from mock_basic')->next;
+    my $row = $db->search_by_sql('select name from mock_basic')->[0];
     isa_ok $row, 'Oden::Row';
 
     eval { $row->update({name => 'python'}); };

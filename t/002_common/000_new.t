@@ -25,10 +25,10 @@ $db->insert_and_select(
     });
 
 subtest 'search' => sub {
-    my $itr = $db->search('mock_basic', {id => 1});
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $db->search('mock_basic', {id => 1});
+    is @$rows, 1;
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
 
     is $row->id,   1;
@@ -42,10 +42,10 @@ subtest 'do new' => sub {
                 '',
                 '',
             ]});
-    my $itr = $model->search('mock_basic');
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $model->search('mock_basic');
+    is @$rows, 2;
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
 
     is $row->id,   1;
@@ -66,10 +66,10 @@ subtest 'do new other connection' => sub {
             name => 'perl',
         });
 
-    my $itr = $model->search('mock_basic');
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $model->search('mock_basic');
+    is @$rows, 1;
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
 
     is $row->id,   1;
@@ -92,10 +92,10 @@ subtest 'do new with dbh' => sub {
             name => 'perl',
         });
 
-    my $itr = $model->search('mock_basic');
-    isa_ok $itr, 'Oden::Iterator';
+    my $rows = $model->search('mock_basic');
+    is @$rows, 1;
 
-    my $row = $itr->next;
+    my $row = $rows->[0];
     isa_ok $row, 'Oden::Row';
 
     is $row->id,   1;
