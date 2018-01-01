@@ -71,18 +71,18 @@ my $guard = MyGuard->new(sub { unlink $db_file });
     subtest 'init data' => sub {
         $oden->setup_test_db;
 
-        $oden->insert('a_multi_pk_table', {id_a => 1, id_b => 1});
-        $oden->insert('a_multi_pk_table', {id_a => 1, id_b => 2});
-        $oden->insert('a_multi_pk_table', {id_a => 1, id_b => 3});
-        my $data = $oden->insert('a_multi_pk_table', {id_a => 2, id_b => 1});
-        $oden->insert('a_multi_pk_table', {id_a => 2, id_b => 2});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 1, id_b => 1});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 1, id_b => 2});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 1, id_b => 3});
+        my $data = $oden->insert_and_select('a_multi_pk_table', {id_a => 2, id_b => 1});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 2, id_b => 2});
 
         is($data->id_a, 2);
         is($data->id_b, 1);
 
-        $oden->insert('a_multi_pk_table', {id_a => 3, id_b => 10});
-        $oden->insert('a_multi_pk_table', {id_a => 3, id_b => 20});
-        $oden->insert('a_multi_pk_table', {id_a => 3, id_b => 30});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 3, id_b => 10});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 3, id_b => 20});
+        $oden->insert_and_select('a_multi_pk_table', {id_a => 3, id_b => 30});
     };
 
     my ($itr, $a_multi_pk_table);
@@ -136,7 +136,7 @@ my $guard = MyGuard->new(sub { unlink $db_file });
     subtest 'multi pk row insert' => sub {
         my ($rs, @rows, $row);
 
-        $row = $oden->insert('a_multi_pk_table', {id_a => 3, id_b => 40});
+        $row = $oden->insert_and_select('a_multi_pk_table', {id_a => 3, id_b => 40});
 
         is_deeply($row->get_columns, {id_a => 3, id_b => 40, memo => 'foobar'});
 
@@ -154,18 +154,18 @@ my $guard = MyGuard->new(sub { unlink $db_file });
     subtest 'init data' => sub {
         $oden->setup_test_db;
 
-        $oden->insert('c_multi_pk_table', {id_c => 1, id_d => 1});
-        $oden->insert('c_multi_pk_table', {id_c => 1, id_d => 2});
-        $oden->insert('c_multi_pk_table', {id_c => 1, id_d => 3});
-        my $data = $oden->insert('c_multi_pk_table', {id_c => 2, id_d => 1});
-        $oden->insert('c_multi_pk_table', {id_c => 2, id_d => 2});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 1, id_d => 1});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 1, id_d => 2});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 1, id_d => 3});
+        my $data = $oden->insert_and_select('c_multi_pk_table', {id_c => 2, id_d => 1});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 2, id_d => 2});
 
         is($data->id_c, 2);
         is($data->id_d, 1);
 
-        $oden->insert('c_multi_pk_table', {id_c => 3, id_d => 10});
-        $oden->insert('c_multi_pk_table', {id_c => 3, id_d => 20});
-        $oden->insert('c_multi_pk_table', {id_c => 3, id_d => 30});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 3, id_d => 10});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 3, id_d => 20});
+        $oden->insert_and_select('c_multi_pk_table', {id_c => 3, id_d => 30});
     };
 
     my (@rows, $a_multi_pk_table);
@@ -217,7 +217,7 @@ my $guard = MyGuard->new(sub { unlink $db_file });
     subtest 'multi pk row insert' => sub {
         my ($rs, @rows, $row);
 
-        $row = $oden->insert('c_multi_pk_table', {id_c => 3, id_d => 40});
+        $row = $oden->insert_and_select('c_multi_pk_table', {id_c => 3, id_d => 40});
 
         is_deeply($row->get_columns, {id_c => 3, id_d => 40, memo => 'foobar'});
 
@@ -247,7 +247,7 @@ my $guard = MyGuard->new(sub { unlink $db_file });
 
     subtest 'multi pk delete' => sub {
         is($oden->search_by_sql('SELECT COUNT(*) AS cnt FROM c_multi_pk_table')->next->get_column('cnt'), 7);
-        my $row = $oden->insert('c_multi_pk_table' => {id_c => 50, id_d => 44});
+        my $row = $oden->insert_and_select('c_multi_pk_table' => {id_c => 50, id_d => 44});
         is($oden->search_by_sql('SELECT COUNT(*) AS cnt FROM c_multi_pk_table')->next->get_column('cnt'), 8);
         is($row->delete(),                                                                                1);
         is($oden->search_by_sql('SELECT COUNT(*) AS cnt FROM c_multi_pk_table')->next->get_column('cnt'), 7);

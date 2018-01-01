@@ -51,7 +51,7 @@ use Test::More;
 my $db = Mock::BasicALLINONE->new(connect_info => ['dbi:SQLite::memory:', '', '']);
 
 $db->setup_test_db;
-$db->insert(
+$db->insert_and_select(
     'mock_basic', {
         id   => 1,
         name => 'perl',

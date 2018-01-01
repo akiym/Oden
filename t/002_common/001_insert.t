@@ -9,7 +9,7 @@ my $db_with_strict_sql_builder = Mock::Basic->new({dbh => $dbh, sql_builder_args
 $db->setup_test_db;
 
 subtest 'insert mock_basic data/ insert method' => sub {
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
@@ -19,7 +19,7 @@ subtest 'insert mock_basic data/ insert method' => sub {
 };
 
 subtest 'insert with strict sql builder' => sub {
-    my $row = $db_with_strict_sql_builder->insert(
+    my $row = $db_with_strict_sql_builder->insert_and_select(
         'mock_basic', {
             id   => 5,
             name => 'python',
@@ -30,7 +30,7 @@ subtest 'insert with strict sql builder' => sub {
 
 subtest 'scalar ref' => sub {
     $db->suppress_row_objects(0);
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             id   => 4,
             name => \"upper('c')",
@@ -41,7 +41,7 @@ subtest 'scalar ref' => sub {
 
 subtest 'insert with suppress_row_objects off' => sub {
     $db->suppress_row_objects(1);
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'xs',
@@ -54,7 +54,7 @@ SKIP: {
     skip "last_insert_id doesn't work when explicitly inserting id in Pg", 1 if $dbh->{Driver}->{Name} eq 'Pg';
     subtest 'fast_insert' => sub {
 
-        my $last_insert_id = $db->fast_insert(
+        my $last_insert_id = $db->insert(
             'mock_basic', {
                 id   => 3,
                 name => 'ruby',
@@ -64,13 +64,13 @@ SKIP: {
 }
 
 subtest 'fast_insert with pkey not named "id"' => sub {
-    my $last_insert_id = $db->fast_insert(
+    my $last_insert_id = $db->insert(
         'mock_basic_anotherpkey', {
             name => 'ruby',
         });
     is $last_insert_id, 1;
 
-    $last_insert_id = $db->fast_insert(
+    $last_insert_id = $db->insert(
         'mock_basic_anotherpkey', {
             name => 'perl',
         });
@@ -78,7 +78,7 @@ subtest 'fast_insert with pkey not named "id"' => sub {
 };
 
 subtest 'insert returning row for mysql_insertid when sth has mysql_insertid' => sub {
-    $db->fast_insert(
+    $db->insert(
         'mock_basic', {
             id   => 999,
             name => 'python',
@@ -89,7 +89,7 @@ subtest 'insert returning row for mysql_insertid when sth has mysql_insertid' =>
             do_insert => {mysql_insertid => 999},
         });
 
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'python',
         });

@@ -12,7 +12,7 @@ SKIP: {
     # So skip it.
     skip 'REPLACE is not supported in Pg.', 1 if $dbh->{Driver}->{Name} eq 'Pg';
     subtest 'replace mock_basic data' => sub {
-        my $row = $db->insert(
+        my $row = $db->insert_and_select(
             'mock_basic', {
                 id   => 1,
                 name => 'perl',

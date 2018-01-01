@@ -74,7 +74,7 @@ use Test::More;
 my $dbh = t::Utils->setup_dbh;
 my $db_basic = Mock::Basic->new({dbh => $dbh});
 $db_basic->setup_test_db;
-$db_basic->insert(
+$db_basic->insert_and_select(
     'mock_basic', {
         id   => 1,
         name => 'perl',
@@ -84,7 +84,7 @@ my $db_basic_row = Mock::BasicRow->new({
     connect_info => ['dbi:SQLite::memory:'],
 });
 $db_basic_row->setup_test_db;
-$db_basic_row->insert(
+$db_basic_row->insert_and_select(
     'mock_basic_row', {
         id   => 1,
         name => 'perl',

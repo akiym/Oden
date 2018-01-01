@@ -27,7 +27,7 @@ TODO: {
 # sqltypesのテストとして機能してないのでは？？？
     subtest 'insert data' => sub {
         local $SIG{__WARN__} = sub { };    # <- why need this?? -- tokuhirom@20100106
-        my $row = $db->insert(
+        my $row = $db->insert_and_select(
             'mock_basic_bind_column', {
                 id   => 1,
                 uid  => 1,
@@ -47,7 +47,7 @@ TODO: {
 
         ok not +$db->single('mock_basic_bind_column');
 
-        $row = $db->insert(
+        $row = $db->insert_and_select(
             'mock_basic_bind_column', {
                 id   => 3,
                 uid  => 3,
@@ -92,7 +92,7 @@ TODO: {
 
         ok not +$db->search_by_sql('select * from mock_basic_bind_column where id = ?', [5])->next;
 
-        ok + $db->insert(
+        ok + $db->insert_and_select(
             'mock_basic_bind_column', {
                 id   => 6,
                 uid  => 6,

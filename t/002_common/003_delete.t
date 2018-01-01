@@ -5,7 +5,7 @@ use Test::More;
 my $dbh = t::Utils->setup_dbh;
 my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
-$db->insert(
+$db->insert_and_select(
     'mock_basic', {
         id   => 1,
         name => 'perl',
@@ -20,12 +20,12 @@ subtest 'delete mock_basic data' => sub {
 };
 
 subtest 'delete row count' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
         });
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'perl',
@@ -37,7 +37,7 @@ subtest 'delete row count' => sub {
 };
 
 subtest 'row object delete' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',

@@ -12,13 +12,13 @@ my $db_with_strict_sql_builder = Mock::Basic->new({dbh => $dbh, sql_builder_args
 $db->setup_test_db;
 
 subtest 'fast_insert returning last_insert_id' => sub {
-    my $id = $db->fast_insert(
+    my $id = $db->insert(
         'mock_basic', {
             name => 'perl',
         });
     is $id, 1;
 
-    my $id2 = $db->fast_insert(
+    my $id2 = $db->insert(
         'mock_basic', {
             name => 'ruby',
         });
@@ -31,7 +31,7 @@ subtest 'fast_insert returning mysql_insertid when sth has mysql_insertid' => su
             do_insert => {mysql_insertid => 3},
         });
 
-    my $id = $db->fast_insert(
+    my $id = $db->insert(
         'mock_basic', {
             name => 'ruby',
         });

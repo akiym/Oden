@@ -13,12 +13,12 @@ my $db = Mock::Basic->new({
         ],
     });
 $db->setup_test_db;
-$db->insert(
+$db->insert_and_select(
     'mock_basic', {
         id   => 1,
         name => 'perl',
     });
-$db->insert(
+$db->insert_and_select(
     'mock_basic', {
         id   => 2,
         name => 'python',
@@ -60,7 +60,7 @@ subtest 'do new other connection' => sub {
                 '',
             ]});
     $model->setup_test_db;
-    $model->insert(
+    $model->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
@@ -86,7 +86,7 @@ subtest 'do new with dbh' => sub {
         dbh => $dbh,
     });
     $model->setup_test_db();
-    $model->insert(
+    $model->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',

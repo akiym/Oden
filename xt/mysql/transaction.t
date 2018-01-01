@@ -9,7 +9,7 @@ Mock::Basic->prepare_db($dbh);
 subtest 'do basic transaction' => sub {
     my $db = Mock::Basic->new(dbh => $dbh);
     $db->txn_begin;
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl',
     });
     is $row->id, 1;
@@ -22,7 +22,7 @@ subtest 'do basic transaction' => sub {
 subtest 'do rollback' => sub {
     my $db = Mock::Basic->new(dbh => $dbh);
     $db->txn_begin;
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl',
     });
     is $row->id, 2;
@@ -35,7 +35,7 @@ subtest 'do rollback' => sub {
 subtest 'do commit' => sub {
     my $db = Mock::Basic->new(dbh => $dbh);
     $db->txn_begin;
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl',
     });
     is $row->id, 3;
@@ -48,7 +48,7 @@ subtest 'do commit' => sub {
 subtest 'do scope commit' => sub {
     my $db = Mock::Basic->new(dbh => $dbh);
     my $txn = $db->txn_scope;
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl',
     });
     is $row->id, 4;
@@ -62,7 +62,7 @@ subtest 'do scope commit' => sub {
 subtest 'do scope rollback' => sub {
     my $db = Mock::Basic->new(dbh => $dbh);
     my $txn = $db->txn_scope;
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl',
     });
     is $row->id, 5;
@@ -78,7 +78,7 @@ subtest 'do scope guard for rollback' => sub {
     {
         local $SIG{__WARN__} = sub {};
         my $txn = $db->txn_scope;
-        my $row = $db->insert('mock_basic',{
+        my $row = $db->insert_and_select('mock_basic',{
             name => 'perl',
         });
         is $row->id, 6;
@@ -94,14 +94,14 @@ subtest 'do nested scope rollback-rollback' => sub {
     my $txn = $db->txn_scope;
     {
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 7;
         is $row2->name, 'perl5.10';
         $txn2->rollback;
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 8;
@@ -118,14 +118,14 @@ subtest 'do nested scope commit-rollback' => sub {
     my $txn = $db->txn_scope;
     {
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 9;
         is $row2->name, 'perl5.10';
         $txn2->commit;
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 10;
@@ -142,14 +142,14 @@ subtest 'do nested scope rollback-commit' => sub {
     my $txn = $db->txn_scope;
     {
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 11;
         is $row2->name, 'perl5.10';
         $txn2->rollback;
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 12;
@@ -171,14 +171,14 @@ subtest 'do nested scope commit-commit' => sub {
     my $txn = $db->txn_scope;
     {
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 13;
         is $row2->name, 'perl5.10';
         $txn2->commit;
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 14;
@@ -196,7 +196,7 @@ subtest 'do nested scope rollback-commit-rollback' => sub {
     {
         local $SIG{__WARN__} = sub {};
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 15;
@@ -204,7 +204,7 @@ subtest 'do nested scope rollback-commit-rollback' => sub {
 
         {
             my $txn3 = $db->txn_scope;
-            my $row3 = $db->insert('mock_basic',{
+            my $row3 = $db->insert_and_select('mock_basic',{
                 name => 'perl',
             });
             is $row3->id, 16;
@@ -214,7 +214,7 @@ subtest 'do nested scope rollback-commit-rollback' => sub {
         eval { $txn2->commit };
         like( $@, qr/tried to commit but already rollbacked in nested transaction./, "error message" );
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 17;
@@ -233,7 +233,7 @@ subtest 'do nested scope rollback-commit-commit' => sub {
     {
         local $SIG{__WARN__} = sub {};
         my $txn2 = $db->txn_scope;
-        my $row2 = $db->insert('mock_basic',{
+        my $row2 = $db->insert_and_select('mock_basic',{
             name => 'perl5.10',
         });
         is $row2->id, 18;
@@ -241,14 +241,14 @@ subtest 'do nested scope rollback-commit-commit' => sub {
 
         {
             my $txn3 = $db->txn_scope;
-            my $row3 = $db->insert('mock_basic',{
+            my $row3 = $db->insert_and_select('mock_basic',{
                 name => 'perl',
             });
             is $row3->id, 19;
             is $row3->name, 'perl';
         }
     }
-    my $row = $db->insert('mock_basic',{
+    my $row = $db->insert_and_select('mock_basic',{
         name => 'perl5.12',
     });
     is $row->id, 20;

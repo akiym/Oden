@@ -41,7 +41,7 @@ my $dbh = t::Utils->setup_dbh;
 my $db = Mock::MultiPK->new({dbh => $dbh});
 $db->setup_test_db;
 
-my $row = $db->insert('multi_pk_table', {
+my $row = $db->insert_and_select('multi_pk_table', {
     created_at => '2000-11-11',
     memo       => 'blah',
 });

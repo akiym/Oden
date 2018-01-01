@@ -6,7 +6,7 @@ my $dbh = t::Utils->setup_dbh;
 my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
-$db->insert(
+$db->insert_and_select(
     'mock_basic', {
         id   => 1,
         name => 'perl',
@@ -77,7 +77,7 @@ subtest 'scalarref update' => sub {
 };
 
 subtest 'update row count' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'c++',
@@ -88,7 +88,7 @@ subtest 'update row count' => sub {
 };
 
 subtest 'update primary key' => sub {
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             id   => 3,
             name => 'php',

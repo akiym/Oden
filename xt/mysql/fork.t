@@ -25,7 +25,7 @@ $db->setup_test_db;
     else {
         # child
         eval {
-            $db->insert('mock_basic',{
+            $db->insert_and_select('mock_basic',{
                 name => 'perl',
             });
         };

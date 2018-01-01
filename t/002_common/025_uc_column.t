@@ -11,7 +11,7 @@ SKIP: {
     # So skip it.
     skip 'uc_column not supported in Pg.', 2 if $dbh->{Driver}->{Name} eq 'Pg';
 
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic_camelcase', {
             Id   => 1,
             Name => 'perl',

@@ -6,7 +6,7 @@ use Mock::Inflate::Name;
 my $dbh = t::Utils->setup_dbh();
 my $db = Mock::Inflate->new({dbh => $dbh});
 $db->setup_test_db;
-$db->insert(
+$db->insert_and_select(
     'mock_inflate', {
         id   => 1,
         name => Mock::Inflate::Name->new(name => 'perl'),

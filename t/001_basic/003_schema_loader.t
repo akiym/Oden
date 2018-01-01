@@ -41,7 +41,7 @@ subtest 'use $dbh' => sub {
     my $row = $db->schema->get_row_class('user');
     is $row, 'Mock::DB::Row::User';
 
-    ok $db->insert('user', {user_id => 1, name => 'inserted'});
+    ok $db->insert_and_select('user', {user_id => 1, name => 'inserted'});
     is $db->single('user', {user_id => 1})->name, 'inserted';
 };
 
@@ -61,7 +61,7 @@ subtest 'use connect_info' => sub {
     my $row = $db->schema->get_row_class('user');
     is $row, 'Mock::DB::Row::User';
 
-    ok $db->insert('user', {user_id => 2, name => 'inserted 2'});
+    ok $db->insert_and_select('user', {user_id => 2, name => 'inserted 2'});
     is $db->single('user', {user_id => 2})->name, 'inserted 2';
 };
 
@@ -81,7 +81,7 @@ subtest 'auto create oden class' => sub {
     my $row = $db->schema->get_row_class('user');
     is $row, 'Proj::DB::Row::User';
 
-    ok $db->insert('user', {user_id => 3, name => 'inserted 3'});
+    ok $db->insert_and_select('user', {user_id => 3, name => 'inserted 3'});
     is $db->single('user', {user_id => 3})->name, 'inserted 3';
 };
 

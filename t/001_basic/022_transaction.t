@@ -8,7 +8,7 @@ $db->setup_test_db;
 
 subtest 'do basic transaction' => sub {
     $db->txn_begin;
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'perl',
         });
@@ -21,7 +21,7 @@ subtest 'do basic transaction' => sub {
 
 subtest 'do rollback' => sub {
     $db->txn_begin;
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'perl',
         });
@@ -34,7 +34,7 @@ subtest 'do rollback' => sub {
 
 subtest 'do commit' => sub {
     $db->txn_begin;
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'perl',
         });
@@ -81,7 +81,7 @@ subtest 'call_txn_scope_after_fork' => sub {
         is $child_dbh, $child_db->dbh;
         is $child_dbh, $txn->[1]->{dbh};
 
-        my $row = $child_db->insert(
+        my $row = $child_db->insert_and_select(
             'mock_basic', {
                 id   => 3,
                 name => 'python',

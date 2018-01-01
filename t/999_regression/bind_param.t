@@ -7,12 +7,12 @@ my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
 subtest 'delete/update rows arrayref' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
         });
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'perl',
@@ -31,12 +31,12 @@ subtest 'delete/update rows arrayref' => sub {
 };
 
 subtest 'delete/update rows using IN operator' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
         });
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'perl',
@@ -54,12 +54,12 @@ subtest 'delete/update rows using IN operator' => sub {
 };
 
 subtest 'delete/update rows using LIKE operator' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
         });
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'perl',
@@ -77,7 +77,7 @@ subtest 'delete/update rows using LIKE operator' => sub {
 };
 
 subtest 'delete/update rows XXX' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',

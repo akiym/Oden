@@ -19,7 +19,7 @@ subtest 'ping_reconnect' => sub {
             'DBI::db' => +{
                 ping => sub { undef $guard; return 0 }
             });
-        $row = $db->insert(
+        $row = $db->insert_and_select(
             'mock_basic', {
                 name => 'perl',
             });
@@ -44,7 +44,7 @@ subtest 'ping_reconnect_at_txn_begin' => sub {
     ok(!$@);
     isnt($old_dbh, $db->dbh);
 
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'python',
         });
@@ -68,7 +68,7 @@ subtest 'ping_reconnect_at_txn_scope' => sub {
     ok(!$@);
     isnt($old_dbh, $db->dbh);
 
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'ruby',
         });
@@ -88,7 +88,7 @@ subtest 'ping_reconnect_at_after_txn_begin' => sub {
             'DBI::db' => +{
                 ping => sub { undef $guard; return 0 }
             });
-        $row = $db->insert(
+        $row = $db->insert_and_select(
             'mock_basic', {
                 name => 'c++',
             });
@@ -110,7 +110,7 @@ subtest 'ping_reconnect_at_after_txn_scope' => sub {
             'DBI::db' => +{
                 ping => sub { undef $guard; return 0 }
             });
-        $row = $db->insert(
+        $row = $db->insert_and_select(
             'mock_basic', {
                 name => 'golang',
             });
@@ -124,7 +124,7 @@ subtest 'ping_reconnect_at_txn_commit' => sub {
     $db->reconnect;
     $db->txn_begin;
 
-    my $row = $db->insert(
+    my $row = $db->insert_and_select(
         'mock_basic', {
             name => 'basic',
         });
@@ -149,7 +149,7 @@ subtest 'ping_reconnect_at_txn_scope_commit' => sub {
     {
         my $scope = $db->txn_scope;
 
-        $row = $db->insert(
+        $row = $db->insert_and_select(
             'mock_basic', {
                 name => 'cobol',
             });

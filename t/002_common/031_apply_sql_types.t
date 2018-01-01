@@ -7,19 +7,19 @@ my $dbh = t::Utils->setup_dbh;
 my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
-$db->insert(
+$db->insert_and_select(
     'mock_basic_sql_types', {
         id        => 1,
         name      => 'perl',
         delete_fg => 1,
     });
-$db->insert(
+$db->insert_and_select(
     'mock_basic_sql_types', {
         id        => 2,
         name      => 'ruby',
         delete_fg => 0,
     });
-$db->insert(
+$db->insert_and_select(
     'mock_basic_sql_types', {
         id        => 3,
         name      => 4,

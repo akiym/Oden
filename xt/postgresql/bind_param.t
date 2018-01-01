@@ -35,7 +35,7 @@ isa_ok( $db, 'Oden' );
 my $binary = "\x21\x00\x21";
 
 # normal
-my $row = $db->insert('foo', { bar => 'あいうえお', baz => $binary } );
+my $row = $db->insert_and_select('foo', { bar => 'あいうえお', baz => $binary } );
 
 is( $row->bar, 'あいうえお', 'text' );
 is( $row->baz, $binary, 'bytea' );
@@ -48,7 +48,7 @@ is( $row->baz, $binary, 'selected bytea' );
 # row object
 $db->suppress_row_objects(1);
 
-$row = $db->insert('foo', { bar => 'あいうえお', baz => $binary } );
+$row = $db->insert_and_select('foo', { bar => 'あいうえお', baz => $binary } );
 
 is( $row->{bar}, 'あいうえお', 'row object text' );
 is( $row->{baz}, $binary, 'row object bytea' );
@@ -74,7 +74,7 @@ $row = $db->single('foo', { id => 2 });
 is( $row->baz, $binary . $binary, 'row updated bytea' );
 
 # explicitly type specified
-$row = $db->insert('foo', { baz => [ $binary, { pg_type => DBD::Pg::PG_BYTEA } ] } );
+$row = $db->insert_and_select('foo', { baz => [ $binary, { pg_type => DBD::Pg::PG_BYTEA } ] } );
 is( $row->baz, $binary, 'explicitly type specified bytea' );
 $row = $db->single('foo', { id => 3 });
 is( $row->baz, $binary, 'selected explicitly type specified' );

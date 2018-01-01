@@ -7,7 +7,7 @@ my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
 subtest 'count' => sub {
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 1,
             name => 'perl',
@@ -15,7 +15,7 @@ subtest 'count' => sub {
 
     is + $db->count('mock_basic' => 'id'), 1;
 
-    $db->insert(
+    $db->insert_and_select(
         'mock_basic', {
             id   => 2,
             name => 'ruby',

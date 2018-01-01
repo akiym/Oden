@@ -9,7 +9,7 @@ $db->setup_test_db;
 Mock::Basic->load_plugin('Pager::MySQLFoundRows');
 
 for my $i (1..32) {
-    $db->insert(mock_basic => { id => $i, name => 'name_'.$i });
+    $db->insert_and_select(mock_basic => { id => $i, name => 'name_'.$i });
 }
 
 subtest 'simple' => sub {
