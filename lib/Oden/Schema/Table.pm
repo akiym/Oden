@@ -1,8 +1,8 @@
 package Oden::Schema::Table;
 use strict;
 use warnings;
-use Class::Accessor::Lite
-    rw => [ qw(
+use Class::Accessor::Lite rw => [
+    qw(
         name
         primary_keys
         columns
@@ -10,9 +10,9 @@ use Class::Accessor::Lite
         sql_types
         row_class
         base_row_class
-    ) ]
-;
-use Carp ();
+    )
+];
+use Carp        ();
 use Class::Load ();
 
 sub new {
@@ -30,7 +30,8 @@ sub new {
     Class::Load::load_optional_class($row_class) or do {
         # make row class automatically
         Class::Load::load_class($self->base_row_class);
-        no strict 'refs'; @{"$row_class\::ISA"} = ($self->base_row_class);
+        no strict 'refs';
+        @{"$row_class\::ISA"} = ($self->base_row_class);
     };
     for my $col (@{$self->columns}) {
         no strict 'refs';
@@ -45,38 +46,38 @@ sub new {
 
 sub get_sql_type {
     my ($self, $column_name) = @_;
-    $self->sql_types->{ $column_name };
+    $self->sql_types->{$column_name};
 }
 
 sub add_deflator {
     my ($self, $rule, $code) = @_;
-    if ( ref $rule ne 'Regexp' ) {
+    if (ref $rule ne 'Regexp') {
         $rule = qr/^\Q$rule\E$/;
     }
     unless (ref($code) eq 'CODE') {
         Carp::croak('deflate code must be coderef.');
     }
-    push @{ $self->{deflators} }, ( $rule, $code );
+    push @{$self->{deflators}}, ($rule, $code);
 }
 
 sub add_inflator {
     my ($self, $rule, $code) = @_;
-    if ( ref $rule ne 'Regexp' ) {
+    if (ref $rule ne 'Regexp') {
         $rule = qr/^\Q$rule\E$/;
     }
     unless (ref($code) eq 'CODE') {
         Carp::croak('inflate code must be coderef.');
     }
-    push @{ $self->{inflators} }, ( $rule, $code );
+    push @{$self->{inflators}}, ($rule, $code);
 }
 
 sub call_deflate {
     my ($self, $col_name, $col_value) = @_;
     my $rules = $self->{deflators};
-    my $i = 0;
-    my $max = @$rules;
-    while ( $i < $max ) {
-        my ($rule, $code) = @$rules[ $i, $i + 1 ];
+    my $i     = 0;
+    my $max   = @$rules;
+    while ($i < $max) {
+        my ($rule, $code) = @$rules[$i, $i + 1];
         if ($col_name =~ /$rule/) {
             return $code->($col_value);
         }
@@ -88,10 +89,10 @@ sub call_deflate {
 sub call_inflate {
     my ($self, $col_name, $col_value) = @_;
     my $rules = $self->{inflators};
-    my $i = 0;
-    my $max = @$rules;
-    while ( $i < $max ) {
-        my ($rule, $code) = @$rules[ $i, $i + 1 ];
+    my $i     = 0;
+    my $max   = @$rules;
+    while ($i < $max) {
+        my ($rule, $code) = @$rules[$i, $i + 1];
         if ($col_name =~ /$rule/) {
             return $code->($col_value);
         }
@@ -102,21 +103,18 @@ sub call_inflate {
 
 sub has_deflators {
     my $self = shift;
-    return scalar @{ $self->{deflators} };
+    return scalar @{$self->{deflators}};
 }
 
 sub has_inflators {
     my $self = shift;
-    return scalar @{ $self->{inflators} };
+    return scalar @{$self->{inflators}};
 }
 
 sub prepare_from_dbh {
     my ($self, $dbh) = @_;
 
-    $self->escaped_columns->{$dbh->{Driver}->{Name}} ||= [
-        map { \$dbh->quote_identifier($_) }
-        @{$self->columns}
-    ];
+    $self->escaped_columns->{$dbh->{Driver}->{Name}} ||= [map { \$dbh->quote_identifier($_) } @{$self->columns}];
 }
 
 1;

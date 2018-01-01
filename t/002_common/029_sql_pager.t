@@ -8,16 +8,18 @@ use DBI;
 my $dbh = DBI->connect('dbi:SQLite::memory:', '', '', {RaiseError => 1, AutoCommit => 1});
 $dbh->do(q{CREATE TABLE foo (bar integer)});
 $dbh->do(q{BEGIN;});
-for my $i (1..35) {
+for my $i (1 .. 35) {
     $dbh->do(q{INSERT INTO foo (bar) VALUES (?)}, {}, $i);
 }
 $dbh->do(q{COMMIT;});
 
 {
+
     package My::DB::Schema;
     use parent qw/Oden::Schema/;
 }
 {
+
     package My::DB;
     use parent qw/Oden/;
     __PACKAGE__->load_plugin(qw/SQLPager/);

@@ -11,8 +11,8 @@ use Oden::Iterator;
 use Oden::Schema;
 use DBIx::TransactionManager 1.06;
 use Oden::QueryBuilder;
-use Class::Accessor::Lite 0.05
-   rw => [ qw(
+use Class::Accessor::Lite 0.05 rw => [
+    qw(
         connect_info
         on_connect_do
         schema
@@ -25,8 +25,8 @@ use Class::Accessor::Lite 0.05
         fields_case
         apply_sql_types
         guess_sql_types
-    )]
-;
+    )
+];
 
 our $VERSION = '0.01';
 
@@ -40,7 +40,7 @@ sub load_plugin {
     my $alias = delete $opt->{alias} || +{};
     {
         no strict 'refs';
-        for my $method ( @{"${pkg}::EXPORT"} ){
+        for my $method (@{"${pkg}::EXPORT"}) {
             *{$class . '::' . ($alias->{$method} || $method)} = $pkg->can($method);
         }
     }
@@ -49,42 +49,42 @@ sub load_plugin {
 }
 
 sub new {
-    my $class = shift;
-    my %args = @_ == 1 ? %{$_[0]} : @_;
+    my $class  = shift;
+    my %args   = @_ == 1 ? %{$_[0]} : @_;
     my $loader = delete $args{loader};
 
-    if ( my $mode = delete $args{mode} ) {
+    if (my $mode = delete $args{mode}) {
         warn "IMPORTANT: 'mode' option is DEPRECATED AND *WILL* BE REMOVED. PLEASE USE 'no_ping' option.\n";
-        if ( !exists $args{no_ping} ) {
-            $args{no_ping} = $mode eq 'ping' ? 0 : 1; 
+        if (!exists $args{no_ping}) {
+            $args{no_ping} = $mode eq 'ping' ? 0 : 1;
         }
     }
 
     my $self = bless {
-        schema_class => "$class\::Schema",
-        owner_pid    => $$,
-        no_ping      => 0,
-        fields_case  => 'NAME_lc',
+        schema_class  => "$class\::Schema",
+        owner_pid     => $$,
+        no_ping       => 0,
+        fields_case   => 'NAME_lc',
         boolean_value => {true => 1, false => 0},
         %args,
     }, $class;
 
-    if (!$loader && ! $self->schema) {
+    if (!$loader && !$self->schema) {
         my $schema_class = $self->{schema_class};
-        Class::Load::load_class( $schema_class );
+        Class::Load::load_class($schema_class);
         my $schema = $schema_class->instance;
-        if (! $schema) {
+        if (!$schema) {
             Carp::croak("schema object was not passed, and could not get schema instance from $schema_class");
         }
         $schema->namespace($class);
-        $self->schema( $schema );
+        $self->schema($schema);
     }
 
     unless ($self->connect_info || $self->{dbh}) {
         Carp::croak("'dbh' or 'connect_info' is required.");
     }
 
-    if ( ! $self->{dbh} ) {
+    if (!$self->{dbh}) {
         $self->connect;
     } else {
         $self->_prepare_from_dbh;
@@ -106,12 +106,11 @@ sub mode {
     my $self = shift;
     warn "IMPORTANT: 'mode' option is DEPRECATED AND *WILL* BE REMOVED. PLEASE USE 'no_ping' option.\n";
 
-    if ( @_ ) {
+    if (@_) {
         my $mode = shift;
-        if ( $mode eq 'ping' ) {
+        if ($mode eq 'ping') {
             $self->no_ping(0);
-        }
-        else {
+        } else {
             $self->no_ping(1);
         }
     }
@@ -126,7 +125,7 @@ sub connect {
     $self->in_transaction_check;
 
     if (@args) {
-        $self->connect_info( \@args );
+        $self->connect_info(\@args);
     }
     my $connect_info = $self->connect_info;
     $connect_info->[3] = {
@@ -134,7 +133,7 @@ sub connect {
         AutoCommit => 1,
         PrintError => 0,
         RaiseError => 1,
-        %{ $connect_info->[3] || {} },
+        %{$connect_info->[3] || {}},
     };
 
     $self->{dbh} = eval { DBI->connect(@$connect_info) }
@@ -150,7 +149,7 @@ sub connect {
 sub _on_connect_do {
     my $self = shift;
 
-    if ( my $on_connect_do = $self->on_connect_do ) {
+    if (my $on_connect_do = $self->on_connect_do) {
         if (not ref($on_connect_do)) {
             $self->do($on_connect_do);
         } elsif (ref($on_connect_do) eq 'CODE') {
@@ -158,7 +157,7 @@ sub _on_connect_do {
         } elsif (ref($on_connect_do) eq 'ARRAY') {
             $self->do($_) for @$on_connect_do;
         } else {
-            Carp::croak('Invalid on_connect_do: '.ref($on_connect_do));
+            Carp::croak('Invalid on_connect_do: ' . ref($on_connect_do));
         }
     }
 }
@@ -172,10 +171,9 @@ sub reconnect {
 
     $self->disconnect();
 
-    if ( @_ ) {
+    if (@_) {
         $self->connect(@_);
-    }
-    else {
+    } else {
         # Why don't use $dbh->clone({InactiveDestroy => 0}) ?
         # because, DBI v1.616 clone with \%attr has bug.
         # my $dbh2 = $dbh->clone({});
@@ -200,11 +198,10 @@ sub disconnect {
     my $self = shift;
 
     delete $self->{txn_manager};
-    if ( my $dbh = $self->{dbh} ) {
-        if ( $self->owner_pid && ($self->owner_pid != $$) ) {
+    if (my $dbh = $self->{dbh}) {
+        if ($self->owner_pid && ($self->owner_pid != $$)) {
             $dbh->{InactiveDestroy} = 1;
-        }
-        else {
+        } else {
             $dbh->disconnect;
         }
     }
@@ -216,13 +213,12 @@ sub _prepare_from_dbh {
 
     $self->{driver_name} = $self->{dbh}->{Driver}->{Name};
     my $builder = $self->{sql_builder};
-    if (! $builder ) {
+    if (!$builder) {
         my $sql_builder_class = $self->{sql_builder_class} || 'Oden::QueryBuilder';
         $builder = $sql_builder_class->new(
             driver => $self->{driver_name},
-            %{ $self->{sql_builder_args} || {} }
-        );
-        $self->sql_builder( $builder );
+            %{$self->{sql_builder_args} || {}});
+        $self->sql_builder($builder);
     }
     $self->{dbh}->{FetchHashKeyName} = $self->{fields_case};
 
@@ -232,14 +228,12 @@ sub _prepare_from_dbh {
 sub _verify_pid {
     my $self = shift;
 
-    if ( !$self->owner_pid || $self->owner_pid != $$ ) {
+    if (!$self->owner_pid || $self->owner_pid != $$) {
         $self->reconnect;
-    }
-    elsif ( my $dbh = $self->{dbh} ) {
-        if ( !$dbh->FETCH('Active') ) {
+    } elsif (my $dbh = $self->{dbh}) {
+        if (!$dbh->FETCH('Active')) {
             $self->reconnect;
-        }
-        elsif ( !$self->no_ping && !$dbh->ping) {
+        } elsif (!$self->no_ping && !$dbh->ping) {
             $self->reconnect;
         }
     }
@@ -254,7 +248,7 @@ sub dbh {
 
 sub connected {
     my $self = shift;
-    my $dbh = $self->{dbh};
+    my $dbh  = $self->{dbh};
     return $self->owner_pid && $dbh->ping;
 }
 
@@ -265,14 +259,15 @@ sub _execute {
 }
 
 our $SQL_COMMENT_LEVEL = 0;
+
 sub execute {
     my ($self, $sql, $binds) = @_;
 
     if ($ENV{ODEN_SQL_COMMENT} || $self->sql_comment) {
-        my $i = $SQL_COMMENT_LEVEL; # optimize, as we would *NEVER* be called
-        while ( my (@caller) = caller($i++) ) {
-            next if ( $caller[0]->isa( __PACKAGE__ ) );
-            next if $caller[0] =~ /^Oden::/; # skip Oden::Row, Oden::Plugin::* etc.
+        my $i = $SQL_COMMENT_LEVEL;    # optimize, as we would *NEVER* be called
+        while (my (@caller) = caller($i++)) {
+            next if ($caller[0]->isa(__PACKAGE__));
+            next if $caller[0] =~ /^Oden::/;          # skip Oden::Row, Oden::Plugin::* etc.
             my $comment = "$caller[1] at line $caller[2]";
             $comment =~ s/\*\// /g;
             $sql = "/* $comment */\n$sql";
@@ -284,13 +279,13 @@ sub execute {
     eval {
         $sth = $self->dbh->prepare($sql);
         my $i = 1;
-        for my $v ( @{ $binds || [] } ) {
+        for my $v (@{$binds || []}) {
             if (Scalar::Util::blessed($v) && ref($v) eq 'SQL::Maker::SQLType') {
                 $sth->bind_param($i++, ${$v->value_ref}, $v->type);
             } else {
                 # allow array ref for using pg_types. e.g. [ $value => { pg_type => PG_BYTEA } ]
                 # ref. https://metacpan.org/pod/DBD::Pg#quote
-                $sth->bind_param( $i++, ref($v) eq 'ARRAY' ? @$v : $v );
+                $sth->bind_param($i++, ref($v) eq 'ARRAY' ? @$v : $v);
             }
         }
         $sth->execute();
@@ -313,17 +308,17 @@ sub _last_insert_id {
     my ($self, $table_name, $column) = @_;
 
     my $driver = $self->{driver_name};
-    if ( $driver eq 'mysql' ) {
+    if ($driver eq 'mysql') {
         return $self->{dbh}->{mysql_insertid};
-    } elsif ( $driver eq 'Pg' ) {
+    } elsif ($driver eq 'Pg') {
         if (defined $column) {
-            return $self->dbh->last_insert_id( undef, undef, undef, undef,{ sequence => join( '_', $table_name, $column, 'seq' ) } );
+            return $self->dbh->last_insert_id(undef, undef, undef, undef, {sequence => join('_', $table_name, $column, 'seq')});
         } else {
-            return $self->dbh->last_insert_id( undef, undef, $table_name, undef);
+            return $self->dbh->last_insert_id(undef, undef, $table_name, undef);
         }
-    } elsif ( $driver eq 'SQLite' ) {
+    } elsif ($driver eq 'SQLite') {
         return $self->dbh->func('last_insert_rowid');
-    } elsif ( $driver eq 'Oracle' ) {
+    } elsif ($driver eq 'Oracle') {
         return;
     } else {
         Carp::croak "Don't know how to get last insert id for $driver";
@@ -331,7 +326,7 @@ sub _last_insert_id {
 }
 
 sub _bind_sql_type_to_args {
-    my ( $self, $table, $args ) = @_;
+    my ($self, $table, $args) = @_;
     my $bind_args = {};
 
     for my $col (keys %{$args}) {
@@ -348,16 +343,16 @@ sub do_insert {
 
     $prefix ||= 'INSERT INTO';
     my $table = $self->schema->get_table($table_name);
-    if (! $table) {
+    if (!$table) {
         local $Carp::CarpLevel = $Carp::CarpLevel + 1;
-        Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+        Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
     }
 
     for my $col (keys %{$args}) {
         $args->{$col} = $table->call_deflate($col, $args->{$col});
     }
-    my $bind_args = $self->_bind_sql_type_to_args( $table, $args );
-    my ($sql, @binds) = $self->{sql_builder}->insert( $table_name, $bind_args, { prefix => $prefix } );
+    my $bind_args = $self->_bind_sql_type_to_args($table, $args);
+    my ($sql, @binds) = $self->{sql_builder}->insert($table_name, $bind_args, {prefix => $prefix});
     $self->execute($sql, \@binds);
 }
 
@@ -381,14 +376,16 @@ sub insert {
     return unless defined wantarray;
 
     my $table = $self->schema->get_table($table_name);
-    my $pk = $table->primary_keys();
+    my $pk    = $table->primary_keys();
 
     my @missing_primary_keys = grep { not defined $args->{$_} } @$pk;
     if (@missing_primary_keys == 1) {
         # XXX in MySQL 5.7.8 or later, $self->dbh->{mysql_insertid} will always return 0,
         # so that get mysql_insertid from $sth. (https://bugs.mysql.com/bug.php?id=78778)
-        $args->{$missing_primary_keys[0]} = defined $sth->{mysql_insertid} ? $sth->{mysql_insertid}
-                                          : $self->_last_insert_id($table_name, $missing_primary_keys[0]);
+        $args->{$missing_primary_keys[0]} =
+            defined $sth->{mysql_insertid}
+            ? $sth->{mysql_insertid}
+            : $self->_last_insert_id($table_name, $missing_primary_keys[0]);
     }
 
     return $args if $self->suppress_row_objects;
@@ -408,33 +405,31 @@ sub insert {
         return $self->single($table_name, \%where);
     }
 
-    $table->row_class->new(
-        {
-            row_data   => $args,
-            oden       => $self,
-            table_name => $table_name,
-        }
-    );
+    $table->row_class->new({
+        row_data   => $args,
+        oden       => $self,
+        table_name => $table_name,
+    });
 }
 
 sub bulk_insert {
     my ($self, $table_name, $args, $opt) = @_;
 
-    return unless scalar(@{$args||[]});
+    return unless scalar(@{$args || []});
 
     my $dbh = $self->dbh;
-    my $can_multi_insert = $dbh->{Driver}->{Name} eq 'mysql' ? 1
-                         : $dbh->{Driver}->{Name} eq 'Pg'
-                             && $dbh->{ pg_server_version } >= 82000 ? 1
-                         : 0;
+    my $can_multi_insert =
+          $dbh->{Driver}->{Name} eq 'mysql' ? 1
+        : $dbh->{Driver}->{Name} eq 'Pg' && $dbh->{pg_server_version} >= 82000 ? 1
+        :                                                                        0;
 
     if ($can_multi_insert) {
         my $table = $self->schema->get_table($table_name);
-        if (! $table) {
-            Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+        if (!$table) {
+            Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
         }
 
-        if ( $table->has_deflators ) {
+        if ($table->has_deflators) {
             for my $row (@$args) {
                 for my $col (keys %{$row}) {
                     $row->{$col} = $table->call_deflate($col, $row->{$col});
@@ -442,7 +437,7 @@ sub bulk_insert {
             }
         }
 
-        my ($sql, @binds) = $self->sql_builder->insert_multi( $table_name, $args, $opt );
+        my ($sql, @binds) = $self->sql_builder->insert_multi($table_name, $args, $opt);
         $self->execute($sql, \@binds);
     } else {
         # use transaction for better performance and atomicity.
@@ -458,7 +453,7 @@ sub bulk_insert {
 sub do_update {
     my ($self, $table_name, $args, $where) = @_;
 
-    my ($sql, @binds) = $self->{sql_builder}->update( $table_name, $args, $where );
+    my ($sql, @binds) = $self->{sql_builder}->update($table_name, $args, $where);
     my $sth = $self->execute($sql, \@binds);
     my $rows = $sth->rows;
     $sth->finish;
@@ -470,21 +465,21 @@ sub update {
     my ($self, $table_name, $args, $where) = @_;
 
     my $table = $self->schema->get_table($table_name);
-    if (! $table) {
-        Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+    if (!$table) {
+        Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
     }
 
     for my $col (keys %{$args}) {
-       $args->{$col} = $table->call_deflate($col, $args->{$col});
+        $args->{$col} = $table->call_deflate($col, $args->{$col});
     }
-    
-    $self->do_update($table_name, $self->_bind_sql_type_to_args( $table, $args ), $where);
+
+    $self->do_update($table_name, $self->_bind_sql_type_to_args($table, $args), $where);
 }
 
 sub delete {
     my ($self, $table_name, $where) = @_;
 
-    my ($sql, @binds) = $self->{sql_builder}->delete( $table_name, $where );
+    my ($sql, @binds) = $self->{sql_builder}->delete($table_name, $where);
     my $sth = $self->execute($sql, \@binds);
     my $rows = $sth->rows;
     $sth->finish;
@@ -494,10 +489,11 @@ sub delete {
 
 #--------------------------------------------------------------------------------
 # for transaction
-sub txn_manager  {
+sub txn_manager {
     my $self = shift;
     $self->_verify_pid;
-    $self->{txn_manager} ||= ($self->{txn_manager_class})
+    $self->{txn_manager} ||=
+        ($self->{txn_manager_class})
         ? $self->{txn_manager_class}->new($self->dbh)
         : DBIx::TransactionManager->new($self->dbh);
 }
@@ -507,7 +503,7 @@ sub in_transaction_check {
 
     return unless $self->{txn_manager};
 
-    if ( my $info = $self->{txn_manager}->in_transaction ) {
+    if (my $info = $self->{txn_manager}->in_transaction) {
         my $caller = $info->{caller};
         my $pid    = $info->{pid};
         Carp::confess("Detected transaction during a connect operation (last known transaction at $caller->[1] line $caller->[2], pid $pid). Refusing to proceed at");
@@ -515,7 +511,7 @@ sub in_transaction_check {
 }
 
 sub txn_scope {
-    my $self = shift;
+    my $self   = shift;
     my @caller = caller();
 
     $self->txn_manager->txn_scope(caller => \@caller);
@@ -527,8 +523,8 @@ sub txn_begin {
     $self->txn_manager->txn_begin;
 }
 sub txn_rollback { $_[0]->txn_manager->txn_rollback }
-sub txn_commit   { $_[0]->txn_manager->txn_commit   }
-sub txn_end      { $_[0]->txn_manager->txn_end      }
+sub txn_commit   { $_[0]->txn_manager->txn_commit }
+sub txn_end      { $_[0]->txn_manager->txn_end }
 
 #--------------------------------------------------------------------------------
 
@@ -547,15 +543,14 @@ sub _get_select_columns {
 
     return $opt->{'+columns'}
         ? [@{$table->{escaped_columns}{$self->{driver_name}}}, @{$opt->{'+columns'}}]
-        : ($opt->{columns} || $table->{escaped_columns}{$self->{driver_name}})
-    ;
+        : ($opt->{columns} || $table->{escaped_columns}{$self->{driver_name}});
 }
 
 sub search {
     my ($self, $table_name, $where, $opt) = @_;
 
-    my $table = $self->{schema}->get_table( $table_name );
-    if (! $table) {
+    my $table = $self->{schema}->get_table($table_name);
+    if (!$table) {
         Carp::croak("No such table $table_name");
     }
 
@@ -570,7 +565,7 @@ sub search {
 }
 
 sub _bind_named {
-    my ($self, $sql, $args ) = @_;
+    my ($self, $sql, $args) = @_;
 
     my @bind;
     $sql =~ s{:([A-Za-z_][A-Za-z0-9_]*)}{
@@ -599,7 +594,7 @@ sub single {
 
     $opt->{limit} = 1;
 
-    my $table = $self->{schema}->get_table( $table_name );
+    my $table = $self->{schema}->get_table($table_name);
     Carp::croak("No such table $table_name") unless $table;
 
     my ($sql, @binds) = $self->{sql_builder}->select(
@@ -619,24 +614,22 @@ sub single {
 
     my $row = $sth->fetchrow_hashref($self->{fields_case});
 
-    return undef unless $row; ## no critic
+    return undef unless $row;    ## no critic
     return $row if $self->{suppress_row_objects};
 
-    $table->{row_class}->new(
-        {
-            sql        => $sql,
-            row_data   => $row,
-            oden       => $self,
-            table      => $table,
-            table_name => $table_name,
-        }
-    );
+    $table->{row_class}->new({
+        sql        => $sql,
+        row_data   => $row,
+        oden       => $self,
+        table      => $table,
+        table_name => $table_name,
+    });
 }
 
 sub search_by_sql {
     my ($self, $sql, $bind, $table_name) = @_;
 
-    $table_name ||= $self->_guess_table_name( $sql );
+    $table_name ||= $self->_guess_table_name($sql);
     my $sth = $self->execute($sql, $bind);
 
     # When the return value is never used, should not create iterator object
@@ -647,14 +640,14 @@ sub search_by_sql {
     }
 
     my $itr = Oden::Iterator->new(
-        oden             => $self,
-        sth              => $sth,
-        sql              => $sql,
-        row_class        => $self->{schema}->get_row_class($table_name),
-        table            => $self->{schema}->get_table( $table_name ),
-        table_name       => $table_name,
-        apply_sql_types  => $self->{apply_sql_types} || $self->{guess_sql_types},
-        guess_sql_types  => $self->{guess_sql_types},
+        oden                     => $self,
+        sth                      => $sth,
+        sql                      => $sql,
+        row_class                => $self->{schema}->get_row_class($table_name),
+        table                    => $self->{schema}->get_table($table_name),
+        table_name               => $table_name,
+        apply_sql_types          => $self->{apply_sql_types} || $self->{guess_sql_types},
+        guess_sql_types          => $self->{guess_sql_types},
         suppress_object_creation => $self->{suppress_row_objects},
     );
     return wantarray ? $itr->all : $itr;
@@ -663,8 +656,8 @@ sub search_by_sql {
 sub single_by_sql {
     my ($self, $sql, $bind, $table_name) = @_;
 
-    $table_name ||= $self->_guess_table_name( $sql );
-    my $table = $self->{schema}->get_table( $table_name );
+    $table_name ||= $self->_guess_table_name($sql);
+    my $table = $self->{schema}->get_table($table_name);
     Carp::croak("No such table $table_name") unless $table;
 
     my $sth = $self->execute($sql, $bind);
@@ -681,30 +674,27 @@ sub single_by_sql {
     return unless $row;
     return $row if $self->{suppress_row_objects};
 
-    $table->{row_class}->new(
-        {
-            sql        => $sql,
-            row_data   => $row,
-            oden       => $self,
-            table      => $table,
-            table_name => $table_name,
-        }
-    );
+    $table->{row_class}->new({
+        sql        => $sql,
+        row_data   => $row,
+        oden       => $self,
+        table      => $table,
+        table_name => $table_name,
+    });
 }
 
 sub new_row_from_hash {
     my ($self, $table_name, $data, $sql) = @_;
 
-    my $table = $self->{schema}->get_table( $table_name );
+    my $table = $self->{schema}->get_table($table_name);
     Carp::croak("No such table $table_name") unless $table;
 
     return $data if $self->{suppress_row_objects};
 
-    $table->{row_class}->new(
-        {
+    $table->{row_class}->new({
             sql => $sql || do {
                 my @caller = caller(0);
-                my $level = 0;
+                my $level  = 0;
                 while ($caller[0] eq __PACKAGE__ || $caller[0] eq ref $self) {
                     @caller = caller(++$level);
                 }
@@ -714,8 +704,7 @@ sub new_row_from_hash {
             oden       => $self,
             table      => $table,
             table_name => $table_name,
-        }
-    );
+        });
 }
 
 sub single_named {
@@ -752,7 +741,7 @@ TRACE
 sub DESTROY {
     my $self = shift;
 
-    if ( $self->owner_pid and $self->owner_pid != $$ and my $dbh = $self->{dbh} ) {
+    if ($self->owner_pid and $self->owner_pid != $$ and my $dbh = $self->{dbh}) {
         $dbh->{InactiveDestroy} = 1;
     }
 }

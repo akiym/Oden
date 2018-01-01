@@ -2,12 +2,12 @@ package Oden::Schema;
 use strict;
 use warnings;
 use Oden::Row;
-use Class::Accessor::Lite
-    rw => [ qw(
+use Class::Accessor::Lite rw => [
+    qw(
         tables
         namespace
-    ) ]
-;
+    )
+];
 
 sub new {
     my ($class, %args) = @_;
@@ -53,7 +53,7 @@ sub get_row_class {
 
 sub camelize {
     my $s = shift;
-    join('', map{ ucfirst $_ } split(/(?<=[A-Za-z])_(?=[A-Za-z])|\b/, $s));
+    join('', map { ucfirst $_ } split(/(?<=[A-Za-z])_(?=[A-Za-z])|\b/, $s));
 }
 
 sub prepare_from_dbh {

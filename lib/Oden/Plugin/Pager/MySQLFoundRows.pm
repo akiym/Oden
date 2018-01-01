@@ -16,10 +16,10 @@ sub search_with_pager {
     my $page = $opt->{page};
     my $rows = $opt->{rows};
 
-    my $columns = $opt->{'+columns'}
+    my $columns =
+        $opt->{'+columns'}
         ? [@{$table->{columns}}, @{$opt->{'+columns'}}]
-        : ($opt->{columns} || $table->{columns})
-    ;
+        : ($opt->{columns} || $table->{columns});
 
     my ($sql, @binds) = $self->sql_builder->select(
         $table_name,
@@ -28,21 +28,20 @@ sub search_with_pager {
         +{
             %$opt,
             limit  => $rows,
-            offset => $rows*($page-1),
+            offset => $rows * ($page - 1),
             prefix => 'SELECT SQL_CALC_FOUND_ROWS ',
-        }
-    );
+        });
     my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
     $sth->execute(@binds) or Carp::croak $self->dbh->errstr;
     my $total_entries = $self->dbh->selectrow_array(q{SELECT FOUND_ROWS()});
 
     my $itr = Oden::Iterator->new(
-        oden             => $self,
-        sth              => $sth,
-        sql              => $sql,
-        row_class        => $self->schema->get_row_class($table_name),
-        table            => $table,
-        table_name       => $table_name,
+        oden                     => $self,
+        sth                      => $sth,
+        sql                      => $sql,
+        row_class                => $self->schema->get_row_class($table_name),
+        table                    => $table,
+        table_name               => $table_name,
         suppress_object_creation => $self->suppress_row_objects,
     );
 

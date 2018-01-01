@@ -21,7 +21,7 @@ sub next {
     if ($self->{sth}) {
         $row = $self->{sth}->fetchrow_hashref;
         $self->{select_columns} ||= $self->{sth}->{$self->{oden}->{fields_case}};
-        unless ( $row ) {
+        unless ($row) {
             $self->{sth}->finish;
             $self->{sth} = undef;
             return;
@@ -34,16 +34,14 @@ sub next {
         return $row;
     } else {
         $self->_apply_sql_types($row) if $self->{apply_sql_types};
-        return $self->{row_class}->new(
-            {
-                sql            => $self->{sql},
-                row_data       => $row,
-                oden           => $self->{oden},
-                table          => $self->{table},
-                table_name     => $self->{table_name},
-                select_columns => $self->{select_columns},
-            }
-        );
+        return $self->{row_class}->new({
+            sql            => $self->{sql},
+            row_data       => $row,
+            oden           => $self->{oden},
+            table          => $self->{table},
+            table_name     => $self->{table_name},
+            select_columns => $self->{select_columns},
+        });
     }
 }
 
@@ -62,8 +60,8 @@ sub _apply_sql_types {
                 or $type == SQL_DECIMAL
                 or $type == SQL_FLOAT
                 or $type == SQL_REAL
-                or $type == SQL_DOUBLE
-               ) {
+                or $type == SQL_DOUBLE)
+            {
                 $row->{$column} += 0;
             } elsif ($type == SQL_BOOLEAN) {
                 if ($self->{oden}->{boolean_value}) {
@@ -100,18 +98,18 @@ sub all {
         $self->{sth} = undef;
 
         if (!$self->{suppress_object_creation}) {
-            $result = [map {
-                $self->{row_class}->new(
-                    {
-                        sql            => $self->{sql},
-                        row_data       => $_,
-                        oden           => $self->{oden},
-                        table          => $self->{table},
-                        table_name     => $self->{table_name},
-                        select_columns => $self->{select_columns},
-                    }
-                )
-            } @$result];
+            $result = [
+                map {
+                    $self->{row_class}->new({
+                            sql            => $self->{sql},
+                            row_data       => $_,
+                            oden           => $self->{oden},
+                            table          => $self->{table},
+                            table_name     => $self->{table_name},
+                            select_columns => $self->{select_columns},
+                        })
+                } @$result
+            ];
         }
     }
 

@@ -9,15 +9,15 @@ sub replace {
     my ($self, $table_name, $args) = @_;
 
     my $table = $self->schema->get_table($table_name);
-    if (! $table) {
-        Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+    if (!$table) {
+        Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
     }
 
     for my $col (keys %{$args}) {
         $args->{$col} = $table->call_deflate($col, $args->{$col});
     }
 
-    my ($sql, @binds) = $self->sql_builder->insert( $table_name, $args, { prefix => 'REPLACE INTO' } );
+    my ($sql, @binds) = $self->sql_builder->insert($table_name, $args, {prefix => 'REPLACE INTO'});
     $self->execute($sql, \@binds, $table_name);
 
     my $pk = $table->primary_keys();
@@ -27,13 +27,11 @@ sub replace {
 
     return $args if $self->suppress_row_objects;
 
-    $table->row_class->new(
-        {
-            row_data   => $args,
-            oden       => $self,
-            table_name => $table_name,
-        }
-    );
+    $table->row_class->new({
+        row_data   => $args,
+        oden       => $self,
+        table_name => $table_name,
+    });
 }
 
 1;

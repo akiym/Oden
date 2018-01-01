@@ -7,10 +7,11 @@ my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
 subtest 'refetch' => sub {
-    my $row = $db->insert('mock_basic',{
-        id   => 1,
-        name => 'perl',
-    });
+    my $row = $db->insert(
+        'mock_basic', {
+            id   => 1,
+            name => 'perl',
+        });
     isa_ok $row, 'Oden::Row';
     is $row->name, 'perl';
 

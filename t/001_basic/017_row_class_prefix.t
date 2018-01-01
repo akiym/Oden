@@ -27,6 +27,7 @@ subtest 'with prefix and row_class' => sub {
 
 subtest 'without prefix' => sub {
     {
+
         package t::My::DB::Schema;
         use Oden::Schema::Declare;
         table {

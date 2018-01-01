@@ -9,16 +9,12 @@ $db->setup_test_db;
 subtest 'do raise error' => sub {
     # XXX: To throw exception with Pg
     local $dbh->{"RaiseError"} = 1;
-    eval {
-        $db->do(q{select * from hoge});
-    };
+    eval { $db->do(q{select * from hoge}); };
     ok $@;
 };
 
 subtest 'do with bind' => sub {
-    eval {
-        $db->do(q{SELECT * from mock_basic WHERE name = ?}, undef, "hoge")
-    };
+    eval { $db->do(q{SELECT * from mock_basic WHERE name = ?}, undef, "hoge") };
     ok not $@;
 };
 

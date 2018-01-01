@@ -11,16 +11,17 @@ subtest 'insert using txn_scope' => sub {
     local $SIG{__WARN__} = sub { $warning = $_[0] };
     {
         my $guard = $db->txn_scope();
-        my $row = $db->insert('mock_basic',{
-            id   => 1,
-            name => 'perl',
-        });
+        my $row   = $db->insert(
+            'mock_basic', {
+                id   => 1,
+                name => 'perl',
+            });
         isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
         $guard->rollback;
     }
 
-    if (! ok ! $warning, "no warnings received") {
+    if (!ok !$warning, "no warnings received") {
         diag "got $warning";
     }
 };
@@ -30,10 +31,11 @@ subtest 'insert using txn_scope (and let the guard fire)' => sub {
     local $SIG{__WARN__} = sub { $warning = $_[0] };
     {
         my $guard = $db->txn_scope();
-        my $row = $db->insert('mock_basic',{
-            id   => 1,
-            name => 'perl',
-        });
+        my $row   = $db->insert(
+            'mock_basic', {
+                id   => 1,
+                name => 'perl',
+            });
         isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
     }

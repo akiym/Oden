@@ -10,12 +10,13 @@ $db->setup_test_db;
 subtest 'set_column value un deflate bug' => sub {
     my $name = Mock::Inflate::Name->new(name => 'nihen');
 
-    my $row = $db->insert('mock_inflate',{
-        id   => 1,
-        name => 'tsucchi',
-        foo  => 'bar',
-        bar  => 'zzz',
-    });
+    my $row = $db->insert(
+        'mock_inflate', {
+            id   => 1,
+            name => 'tsucchi',
+            foo  => 'bar',
+            bar  => 'zzz',
+        });
     isa_ok $row, 'Oden::Row';
     isa_ok $row->name, 'Mock::Inflate::Name';
     note explain $row->get_columns;

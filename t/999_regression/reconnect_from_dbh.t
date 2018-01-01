@@ -6,7 +6,6 @@ my $dbh = t::Utils->setup_dbh;
 my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
-
 subtest 'reconnect success' => sub {
     my $dbh = $db->dbh;
     eval { $db->reconnect; };

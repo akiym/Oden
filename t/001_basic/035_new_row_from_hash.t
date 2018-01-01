@@ -7,8 +7,7 @@ my $db_basic = Mock::Basic->new({dbh => $dbh});
 $db_basic->setup_test_db;
 
 subtest 'new_row_from_hash method' => sub {
-    my $raw_data = [
-        {
+    my $raw_data = [{
             id   => 1,
             name => 'perl',
         },
@@ -22,7 +21,7 @@ subtest 'new_row_from_hash method' => sub {
         },
     ];
 
-    my $rows = [ map { $db_basic->new_row_from_hash(mock_basic => $_) } @$raw_data ];
+    my $rows = [map { $db_basic->new_row_from_hash(mock_basic => $_) } @$raw_data];
     is $rows->[0]->{sql}, sprintf('/* DUMMY QUERY Mock::Basic->new_row_from_hash created from %s line %d */', __FILE__, __LINE__ - 1);
     isa_ok $_, 'Oden::Row' for @$rows;
     is $rows->[0]->id, 1;

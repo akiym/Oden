@@ -7,7 +7,8 @@ use Oden::Schema::Dumper;
 
 # initialize
 my $dbh = DBI->connect('dbi:SQLite::memory:', '', '', {RaiseError => 1}) or die 'cannot connect to db';
-$dbh->do(q{
+$dbh->do(
+    q{
     create table user1 (
         user_id integer primary key,
         name varchar(255),
@@ -15,7 +16,8 @@ $dbh->do(q{
         created_on int
     );
 });
-$dbh->do(q{
+$dbh->do(
+    q{
     create table user2 (
         user_id integer primary key,
         name varchar(255),
@@ -23,7 +25,8 @@ $dbh->do(q{
         created_on int
     );
 });
-$dbh->do(q{
+$dbh->do(
+    q{
     create table user3 (
         user_id integer primary key,
         name varchar(255),
@@ -31,7 +34,6 @@ $dbh->do(q{
         created_on int
     );
 });
-
 
 subtest "dump all tables" => sub {
     # generate schema and eval.
@@ -57,6 +59,7 @@ subtest "dump all tables" => sub {
     diag $@ if $@;
 
     {
+
         package Mock::DB;
         use parent 'Oden';
     }
@@ -67,7 +70,7 @@ subtest "dump all tables" => sub {
         my $user = $db->schema->get_table($table_name);
         is($user->name, $table_name);
         is(join(',', @{$user->primary_keys}), 'user_id');
-        is(join(',', @{$user->columns}), 'user_id,name,email,created_on');
+        is(join(',', @{$user->columns}),      'user_id,name,email,created_on');
     }
 
     my $row_class = $db->schema->get_row_class('user1');
@@ -83,10 +86,10 @@ subtest "dump single table" => sub {
     my $code = Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
-        tables => 'user1',
+        tables    => 'user1',
     );
     note $code;
-    like $code, qr/user1/;
+    like $code,   qr/user1/;
     unlike $code, qr/user2/;
     unlike $code, qr/user3/;
 };
@@ -96,11 +99,11 @@ subtest "dump multiple tables" => sub {
     my $code = Oden::Schema::Dumper->dump(
         dbh       => $dbh,
         namespace => 'Mock::DB',
-        tables => [qw/user1 user2/],
+        tables    => [qw/user1 user2/],
     );
     note $code;
-    like $code, qr/user1/;
-    like $code, qr/user2/;
+    like $code,   qr/user1/;
+    like $code,   qr/user2/;
     unlike $code, qr/user3/;
 };
 subtest "dump with base_row_class" => sub {

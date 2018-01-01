@@ -6,6 +6,7 @@ use Oden::Schema::Table;
 use Oden::Schema::Declare;
 
 {
+
     package My::Row;
     use parent qw/Oden::Row/;
 }
@@ -15,8 +16,7 @@ subtest 'Oden::Schema::Table#new' => sub {
         my $table = Oden::Schema::Table->new(
             row_class      => 'My::Not::Existent',
             base_row_class => 'My::Row',
-            columns        => []
-        );
+            columns        => []);
         isa_ok('My::Not::Existent', 'My::Row');
     };
 };

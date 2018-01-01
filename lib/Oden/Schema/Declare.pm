@@ -19,7 +19,7 @@ our @EXPORT = qw(
 );
 our $CURRENT_SCHEMA_CLASS;
 
-sub schema (&;$) { 
+sub schema (&;$) {
     my ($code, $schema_class) = @_;
     local $CURRENT_SCHEMA_CLASS = $schema_class;
     $code->();
@@ -49,27 +49,27 @@ sub _current_schema {
     my $class = __PACKAGE__;
     my $schema_class;
 
-    if ( $CURRENT_SCHEMA_CLASS ) {
+    if ($CURRENT_SCHEMA_CLASS) {
         $schema_class = $CURRENT_SCHEMA_CLASS;
     } else {
         my $i = 1;
-        while ( $schema_class = caller($i++) ) {
-            if ( ! $schema_class->isa( $class ) ) {
+        while ($schema_class = caller($i++)) {
+            if (!$schema_class->isa($class)) {
                 last;
             }
         }
     }
 
-    if (! $schema_class) {
-        Carp::confess( "PANIC: cannot find a package name that is not ISA $class" );
+    if (!$schema_class) {
+        Carp::confess("PANIC: cannot find a package name that is not ISA $class");
     }
 
     no warnings 'once';
-    if (! $schema_class->isa( 'Oden::Schema' ) ) {
+    if (!$schema_class->isa('Oden::Schema')) {
         no strict 'refs';
-        push @{ "$schema_class\::ISA" }, 'Oden::Schema';
+        push @{"$schema_class\::ISA"}, 'Oden::Schema';
         my $schema = $schema_class->new();
-        $schema_class->set_default_instance( $schema );
+        $schema_class->set_default_instance($schema);
     }
 
     $schema_class->instance();
@@ -80,8 +80,9 @@ sub columns(@);
 sub name ($);
 sub row_class ($);
 sub inflate_rule ($@);
+
 sub table(&) {
-    my $code = shift;
+    my $code    = shift;
     my $current = _current_schema();
 
     my (
@@ -93,18 +94,18 @@ sub table(&) {
         $row_class,
     );
     no warnings 'redefine';
-    
+
     my $dest_class = caller();
     no strict 'refs';
     no warnings 'once';
-    local *{"$dest_class\::name"}      = sub ($) { 
+    local *{"$dest_class\::name"} = sub ($) {
         $table_name = shift;
-        $row_class  ||= row_namespace($table_name);
+        $row_class ||= row_namespace($table_name);
     };
-    local *{"$dest_class\::pk"}        = sub (@) { @table_pk = @_ };
+    local *{"$dest_class\::pk"}        = sub (@) { @table_pk      = @_ };
     local *{"$dest_class\::columns"}   = sub (@) { @table_columns = @_ };
-    local *{"$dest_class\::row_class"} = sub (@) { $row_class = shift };
-    local *{"$dest_class\::inflate"} = sub ($&) {
+    local *{"$dest_class\::row_class"} = sub (@) { $row_class     = shift };
+    local *{"$dest_class\::inflate"}   = sub ($&) {
         my ($rule, $code) = @_;
         if (ref $rule ne 'Regexp') {
             $rule = qr/^\Q$rule\E$/;
@@ -123,7 +124,7 @@ sub table(&) {
 
     my @col_names;
     my %sql_types;
-    while ( @table_columns ) {
+    while (@table_columns) {
         my $col_name = shift @table_columns;
         if (ref $col_name) {
             my $sql_type = $col_name->{type};
@@ -143,8 +144,7 @@ sub table(&) {
             deflators    => \@deflate,
             row_class    => $row_class,
             ($current->{__base_row_class} ? (base_row_class => $current->{__base_row_class}) : ()),
-        )
-    ); 
+        ));
 }
 
 1;

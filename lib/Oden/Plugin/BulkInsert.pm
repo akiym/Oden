@@ -10,15 +10,15 @@ warn "IMPORTANT: Oden::Plugin::BulkInsert is DEPRECATED AND *WILL* BE REMOVED. D
 sub bulk_insert {
     my ($self, $table_name, $args) = @_;
 
-    return unless scalar(@{$args||[]});
+    return unless scalar(@{$args || []});
 
     if ($self->dbh->{Driver}->{Name} eq 'mysql') {
         my $table = $self->schema->get_table($table_name);
-        if (! $table) {
-            Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+        if (!$table) {
+            Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
         }
 
-        if ( $table->has_deflators ) {
+        if ($table->has_deflators) {
             for my $row (@$args) {
                 for my $col (keys %{$row}) {
                     $row->{$col} = $table->call_deflate($col, $row->{$col});
@@ -26,7 +26,7 @@ sub bulk_insert {
             }
         }
 
-        my ($sql, @binds) = $self->sql_builder->insert_multi( $table_name, $args );
+        my ($sql, @binds) = $self->sql_builder->insert_multi($table_name, $args);
         $self->execute($sql, \@binds);
     } else {
         # use transaction for better performance and atomicity.

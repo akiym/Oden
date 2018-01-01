@@ -10,11 +10,12 @@ $db->setup_test_db;
 subtest 'scalar data bug case' => sub {
     my $name = Mock::Inflate::Name->new(name => 'perl');
 
-    my $row = $db->insert('mock_inflate',{
-        id   => 1,
-        bar  => 'baz',
-        name => 'azumakuniyuki',
-    });
+    my $row = $db->insert(
+        'mock_inflate', {
+            id   => 1,
+            bar  => 'baz',
+            name => 'azumakuniyuki',
+        });
 
     isa_ok $row, 'Oden::Row';
     isa_ok $row->name, 'Mock::Inflate::Name';

@@ -13,15 +13,24 @@ subtest 'fixup_reconnect' => sub {
     my $row;
     my $old_dbh = $db->dbh;
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_execute; $guard_execute = mock_guard('DBI::st' => +{execute => sub {
-            undef $guard_execute;
-            die('disconnected');
-        } });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_execute;
+        $guard_execute = mock_guard(
+            'DBI::st' => +{
+                execute => sub {
+                    undef $guard_execute;
+                    die('disconnected');
+                }
+            });
 
-        $row = $db->insert('mock_basic',{
-            name => 'perl',
-        });
+        $row = $db->insert(
+            'mock_basic', {
+                name => 'perl',
+            });
     };
     like $@, qr/disconnected/;
 
@@ -32,11 +41,19 @@ subtest 'fixup_reconnect_at_txn_begin' => sub {
     $db->reconnect;
     my $old_dbh = $db->dbh;
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_begin; $guard_begin = mock_guard('DBI::db' => +{begin_work => sub {
-            undef $guard_begin;
-            die('disconnected');
-        } });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_begin;
+        $guard_begin = mock_guard(
+            'DBI::db' => +{
+                begin_work => sub {
+                    undef $guard_begin;
+                    die('disconnected');
+                }
+            });
         $db->txn_begin;
     };
     like $@, qr/disconnected/;
@@ -48,11 +65,19 @@ subtest 'fixup_reconnect_at_txn_scope' => sub {
     my $old_dbh = $db->dbh;
     my $scope;
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_begin; $guard_begin = mock_guard('DBI::db' => +{begin_work => sub {
-            undef $guard_begin;
-            die('disconnected');
-        } });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_begin;
+        $guard_begin = mock_guard(
+            'DBI::db' => +{
+                begin_work => sub {
+                    undef $guard_begin;
+                    die('disconnected');
+                }
+            });
         $scope = $db->txn_scope;
     };
     like $@, qr/disconnected/;
@@ -65,14 +90,23 @@ subtest 'fixup_reconnect_at_after_txn_begin' => sub {
 
     my $row;
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_execute; $guard_execute = mock_guard('DBI::st' => +{execute => sub {
-            undef $guard_execute;
-            die('disconnected');
-        } });
-        $row = $db->insert('mock_basic',{
-            name => 'c++',
-        });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_execute;
+        $guard_execute = mock_guard(
+            'DBI::st' => +{
+                execute => sub {
+                    undef $guard_execute;
+                    die('disconnected');
+                }
+            });
+        $row = $db->insert(
+            'mock_basic', {
+                name => 'c++',
+            });
     };
     like $@, qr/disconnected/;
     $db->txn_rollback;
@@ -84,14 +118,23 @@ subtest 'fixup_reconnect_at_after_txn_scope' => sub {
 
     my $row;
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_execute; $guard_execute = mock_guard('DBI::st' => +{execute => sub {
-            undef $guard_execute;
-            die('disconnected');
-        } });
-        $row = $db->insert('mock_basic',{
-            name => 'golang',
-        });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_execute;
+        $guard_execute = mock_guard(
+            'DBI::st' => +{
+                execute => sub {
+                    undef $guard_execute;
+                    die('disconnected');
+                }
+            });
+        $row = $db->insert(
+            'mock_basic', {
+                name => 'golang',
+            });
     };
     like $@, qr/disconnected/;
     $scope->rollback;
@@ -101,16 +144,25 @@ subtest 'fixup_reconnect_at_txn_commit' => sub {
     $db->reconnect;
     $db->txn_begin;
 
-    my $row = $db->insert('mock_basic',{
-        name => 'basic',
-    });
+    my $row = $db->insert(
+        'mock_basic', {
+            name => 'basic',
+        });
 
     eval {
-        my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-        my $guard_commit; $guard_commit = mock_guard('DBI::db' => +{commit => sub {
-            undef $guard_commit;
-            die('disconnected');
-        } });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                ping => sub { undef $guard; return 0 }
+            });
+        my $guard_commit;
+        $guard_commit = mock_guard(
+            'DBI::db' => +{
+                commit => sub {
+                    undef $guard_commit;
+                    die('disconnected');
+                }
+            });
         $db->txn_commit;
     };
     like $@, qr/disconnected/;
@@ -122,23 +174,31 @@ subtest 'fixup_reconnect_at_txn_scope_commit' => sub {
     {
         my $scope = $db->txn_scope;
 
-        $row = $db->insert('mock_basic',{
-            name => 'cobol',
-        });
+        $row = $db->insert(
+            'mock_basic', {
+                name => 'cobol',
+            });
 
         eval {
-            my $guard; $guard = mock_guard('DBI::db' => +{ping => sub { undef $guard; return 0 } });
-            my $guard_commit; $guard_commit = mock_guard('DBIx::TransactionManager::ScopeGuard' => +{commit => sub {
-                undef $guard_commit;
-                die('disconnected');
-            }});
+            my $guard;
+            $guard = mock_guard(
+                'DBI::db' => +{
+                    ping => sub { undef $guard; return 0 }
+                });
+            my $guard_commit;
+            $guard_commit = mock_guard(
+                'DBIx::TransactionManager::ScopeGuard' => +{
+                    commit => sub {
+                        undef $guard_commit;
+                        die('disconnected');
+                    }
+                });
             $scope->commit;
         };
         like $@, qr/disconnected/;
         $scope->rollback;
     }
 };
-
 
 unlink 'test.db';
 done_testing;

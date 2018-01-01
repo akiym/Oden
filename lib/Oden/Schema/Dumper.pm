@@ -3,30 +3,28 @@ use strict;
 use warnings;
 use DBIx::Inspector 0.06;
 use Carp ();
-use DBI ();
+use DBI  ();
 
 my %SQLTYPE2NAME = map { &{$DBI::{$_}} => $_ } @{$DBI::EXPORT_TAGS{sql_types}};
 
 sub dump {
     my $class = shift;
-    my %args = @_==1 ? %{$_[0]} : @_;
+    my %args = @_ == 1 ? %{$_[0]} : @_;
 
-    my $dbh       = $args{dbh} or Carp::croak("missing mandatory parameter 'dbh'");
+    my $dbh       = $args{dbh}       or Carp::croak("missing mandatory parameter 'dbh'");
     my $namespace = $args{namespace} or Carp::croak("missing mandatory parameter 'namespace'");
 
     my $inspector = DBIx::Inspector->new(dbh => $dbh);
 
     my $ret = "";
 
-    if ( ref $args{tables} eq "ARRAY" ) {
-        for my $table_name (@{ $args{tables} }) {
+    if (ref $args{tables} eq "ARRAY") {
+        for my $table_name (@{$args{tables}}) {
             $ret .= _render_table($inspector->table($table_name), \%args);
         }
-    }
-    elsif ( $args{tables} ) {
+    } elsif ($args{tables}) {
         $ret .= _render_table($inspector->table($args{tables}), \%args);
-    }
-    else {
+    } else {
         $ret .= "package ${namespace}::Schema;\n";
         $ret .= "use strict;\n";
         $ret .= "use warnings;\n";
@@ -49,7 +47,7 @@ sub _render_table {
 
     $ret .= "table {\n";
     $ret .= sprintf("    name '%s';\n", $table_info->name);
-    $ret .= sprintf("    pk %s;\n", join ',' , map { q{'}.$_->name.q{'} } $table_info->primary_key);
+    $ret .= sprintf("    pk %s;\n", join ',', map { q{'} . $_->name . q{'} } $table_info->primary_key);
     $ret .= "    columns (\n";
     for my $col ($table_info->columns) {
         if ($col->data_type) {

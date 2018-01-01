@@ -3,6 +3,7 @@ use warnings;
 use t::Utils;
 use Test::More;
 {
+
     package Mock::LoadPlugin;
     use strict;
     use warnings;
@@ -19,16 +20,18 @@ use Test::More;
     };
     plan skip_all => 'This test requires Class::Method::Modifiers' if $@;
 
-
     sub setup_test_db {
         my $self = shift;
-        $self->do(q{
+        $self->do(
+            q{
             CREATE TABLE mock_table(
                 id INTEGER PRIMARY KEY,
                 name TEXT
             )
-        });
+        }
+        );
     }
+
     package Mock::LoadPlugin::Schema;
     use utf8;
     use Oden::Schema::Declare;
@@ -38,12 +41,14 @@ use Test::More;
         pk qw( id );
         columns qw( id name );
     };
+
     package Mock::LoadPlugin2;
     use strict;
     use warnings;
     use parent qw/Oden/;
 
     __PACKAGE__->load_plugin('Count');
+
     package Mock::LoadPlugin2::Schema;
     use utf8;
     use Oden::Schema::Declare;
@@ -64,7 +69,7 @@ $db_file =~ s/\.t$/.db/;
 unlink $db_file if -f $db_file;
 my $guard = MyGuard->new(sub { unlink $db_file });
 
-my $dbh = DBI->connect("dbi:SQLite:$db_file",'','',{});
+my $dbh = DBI->connect("dbi:SQLite:$db_file", '', '', {});
 
 my $db = Mock::LoadPlugin->new(dbh => $dbh);
 my $db2 = Mock::LoadPlugin2->new(dbh => $dbh);

@@ -9,7 +9,11 @@ $db->setup_test_db;
 
 subtest 'reconnect_with_clone_exception' => sub {
     {
-        my $guard; $guard = mock_guard('DBI::db' => +{clone => sub { die('exception') } });
+        my $guard;
+        $guard = mock_guard(
+            'DBI::db' => +{
+                clone => sub { die('exception') }
+            });
         ok !eval {
             $db->reconnect;
             1;

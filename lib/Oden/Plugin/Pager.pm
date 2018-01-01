@@ -20,10 +20,10 @@ sub search_with_pager {
         Carp::croak("missing mandatory parameter: $_") unless exists $opt->{$_};
     }
 
-    my $columns = $opt->{'+columns'}
+    my $columns =
+        $opt->{'+columns'}
         ? [@{$table->{columns}}, @{$opt->{'+columns'}}]
-        : ($opt->{columns} || $table->{columns})
-    ;
+        : ($opt->{columns} || $table->{columns});
 
     my ($sql, @binds) = $self->sql_builder->select(
         $table_name,
@@ -31,25 +31,26 @@ sub search_with_pager {
         $where,
         +{
             %$opt,
-            limit => $rows + 1,
-            offset => $rows*($page-1),
-        }
-    );
+            limit  => $rows + 1,
+            offset => $rows * ($page - 1),
+        });
 
     my $sth = $self->dbh->prepare($sql) or Carp::croak $self->dbh->errstr;
     $sth->execute(@binds) or Carp::croak $self->dbh->errstr;
 
-    my $ret = [ Oden::Iterator->new(
-        oden             => $self,
-        sth              => $sth,
-        sql              => $sql,
-        row_class        => $self->schema->get_row_class($table_name),
-        table            => $table,
-        table_name       => $table_name,
-        suppress_object_creation => $self->suppress_row_objects,
-    )->all];
+    my $ret = [
+        Oden::Iterator->new(
+            oden                     => $self,
+            sth                      => $sth,
+            sql                      => $sql,
+            row_class                => $self->schema->get_row_class($table_name),
+            table                    => $table,
+            table_name               => $table_name,
+            suppress_object_creation => $self->suppress_row_objects,
+        )->all
+    ];
 
-    my $has_next = ( $rows + 1 == scalar(@$ret) ) ? 1 : 0;
+    my $has_next = ($rows + 1 == scalar(@$ret)) ? 1 : 0;
     if ($has_next) { pop @$ret }
 
     my $pager = Data::Page::NoTotalEntries->new(

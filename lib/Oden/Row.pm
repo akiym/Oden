@@ -12,7 +12,7 @@ sub new {
 
     my $self = bless {
         # inflated values
-        _get_column_cached     => {},
+        _get_column_cached => {},
         # values will be updated
         _dirty_columns         => {},
         _autoload_column_cache => {},
@@ -22,7 +22,7 @@ sub new {
     $self->{select_columns} ||= [keys %{$args->{row_data}}];
     $self->{table} ||= $args->{oden}->schema->get_table($args->{table_name});
 
-    $obj{$self+0} = delete $self->{oden};
+    $obj{$self + 0} = delete $self->{oden};
 
     $self;
 }
@@ -34,14 +34,14 @@ sub generate_column_accessor {
         my $self = shift;
 
         # setter is alias of set_column (not deflate column) for historical reason
-        return $self->set_column( $col => @_ ) if @_;
+        return $self->set_column($col => @_) if @_;
 
         # getter is alias of get (inflate column)
         $self->get($col);
     };
 }
 
-sub handle { $obj{$_[0]+0} }
+sub handle { $obj{$_[0] + 0} }
 
 sub get {
     my ($self, $col) = @_;
@@ -53,8 +53,8 @@ sub get {
         Carp::carp("${col}'s row data is untrusted. by your update query.");
     }
     my $cache = $self->{_get_column_cached};
-    my $data = $cache->{$col};
-    if (! $data) {
+    my $data  = $cache->{$col};
+    if (!$data) {
         $data = $cache->{$col} = $self->{table} ? $self->{table}->call_inflate($col, $self->get_column($col)) : $self->get_column($col);
     }
     return $data;
@@ -62,7 +62,7 @@ sub get {
 
 sub set {
     my ($self, $col, $val) = @_;
-    $self->set_column( $col => $val, deflate => 1);
+    $self->set_column($col => $val, deflate => 1);
     delete $self->{_get_column_cached}->{$col};
     return $self;
 }
@@ -70,18 +70,18 @@ sub set {
 sub get_column {
     my ($self, $col) = @_;
 
-    unless ( $col ) {
+    unless ($col) {
         Carp::croak('please specify $col for first argument');
     }
 
-    if ( exists $self->{row_data}->{$col} ) {
+    if (exists $self->{row_data}->{$col}) {
         if (exists $self->{_dirty_columns}->{$col}) {
             return $self->{_dirty_columns}->{$col};
         } else {
             return $self->{row_data}->{$col};
         }
     } else {
-        Carp::croak("Specified column '$col' not found in row (query: " . ( $self->{sql} || 'unknown' ) . ")" );
+        Carp::croak("Specified column '$col' not found in row (query: " . ($self->{sql} || 'unknown') . ")");
     }
 }
 
@@ -89,7 +89,7 @@ sub get_columns {
     my $self = shift;
 
     my %data;
-    for my $col ( @{$self->{select_columns}} ) {
+    for my $col (@{$self->{select_columns}}) {
         $data{$col} = $self->get_column($col);
     }
     return \%data;
@@ -101,9 +101,10 @@ sub set_column {
         $val = $self->{table}->call_deflate($col, $val);
     }
 
-    if ( defined $self->{row_data}->{$col} 
-      && defined $val 
-      && $self->{row_data}->{$col} eq $val ) {
+    if (   defined $self->{row_data}->{$col}
+        && defined $val
+        && $self->{row_data}->{$col} eq $val)
+    {
         return $val;
     }
 
@@ -127,12 +128,12 @@ sub set_columns {
 
 sub get_dirty_columns {
     my $self = shift;
-    +{ %{ $self->{_dirty_columns} } };
+    +{%{$self->{_dirty_columns}}};
 }
 
 sub is_changed {
     my $self = shift;
-    keys %{$self->{_dirty_columns}} > 0
+    keys %{$self->{_dirty_columns}} > 0;
 }
 
 sub update {
@@ -144,8 +145,8 @@ sub update {
 
     my $table      = $self->{table};
     my $table_name = $self->{table_name};
-    if (! $table) {
-        Carp::croak( "Table definition for $table_name does not exist (Did you declare it in our schema?)" );
+    if (!$table) {
+        Carp::croak("Table definition for $table_name does not exist (Did you declare it in our schema?)");
     }
 
     if ($upd) {
@@ -157,10 +158,9 @@ sub update {
     if ($where) {
         $where = {
             %$where,
-            %{ $self->_where_cond },
+            %{$self->_where_cond},
         };
-    }
-    else {
+    } else {
         $where = $self->_where_cond;
     }
 
@@ -171,7 +171,7 @@ sub update {
     my $result = $self->handle->do_update($table_name, $bind_args, $where, 1);
     if ($result > 0) {
         $self->{row_data} = {
-            %{ $self->{row_data} },
+            %{$self->{row_data}},
             %$upd,
         };
     }
@@ -212,39 +212,39 @@ sub _where_cond {
     }
 
     # multi primary keys
-    if ( ref $pk eq 'ARRAY' ) {
+    if (ref $pk eq 'ARRAY') {
         unless (@$pk) {
             Carp::croak("$table_name has no primary key.");
         }
 
         my %pks = map { $_ => 1 } @$pk;
 
-        unless ( ( grep { exists $pks{ $_ } } @{$self->{select_columns}} ) == @$pk ) {
+        unless ((grep { exists $pks{$_} } @{$self->{select_columns}}) == @$pk) {
             Carp::croak "can't get primary columns in your query.";
         }
 
-        return +{ map { $_ => $self->{row_data}->{$_} } @$pk };
+        return +{map { $_ => $self->{row_data}->{$_} } @$pk};
     } else {
         unless (grep { $pk eq $_ } @{$self->{select_columns}}) {
             Carp::croak "can't get primary column in your query.";
         }
 
-        return +{ $pk => $self->{row_data}->{$pk} };
+        return +{$pk => $self->{row_data}->{$pk}};
     }
 }
 
 # for +columns option by some search methods
 sub AUTOLOAD {
     my $self = shift;
-    my($method) = ($AUTOLOAD =~ /([^:']+$)/);
+    my ($method) = ($AUTOLOAD =~ /([^:']+$)/);
     ($self->{_autoload_column_cache}{$method} ||= $self->generate_column_accessor($method))->($self);
 }
 
 ### don't autoload this
 sub DESTROY {
     my $self = shift;
-    delete $obj{$self+0};
-};
+    delete $obj{$self + 0};
+}
 
 1;
 

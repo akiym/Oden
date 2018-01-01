@@ -12,17 +12,19 @@ SKIP: {
     # So skip it.
     skip 'REPLACE is not supported in Pg.', 1 if $dbh->{Driver}->{Name} eq 'Pg';
     subtest 'replace mock_basic data' => sub {
-        my $row = $db->insert('mock_basic',{
-            id   => 1,
-            name => 'perl',
-        });
+        my $row = $db->insert(
+            'mock_basic', {
+                id   => 1,
+                name => 'perl',
+            });
         isa_ok $row, 'Oden::Row';
         is $row->name, 'perl';
 
-        my $replaced_row = $db->replace('mock_basic',{
-            id   => 1,
-            name => 'ruby',
-        });
+        my $replaced_row = $db->replace(
+            'mock_basic', {
+                id   => 1,
+                name => 'ruby',
+            });
         isa_ok $replaced_row, 'Oden::Row';
         is $replaced_row->name, 'ruby';
     };

@@ -9,11 +9,11 @@ use Data::Page::NoTotalEntries;
 
 sub search_by_sql_with_pager {
     my ($self, $sql, $binds, $opt, $table_name) = @_;
-    $table_name ||= $self->_guess_table_name( $sql );
+    $table_name ||= $self->_guess_table_name($sql);
 
-    my $page = 0+$opt->{page};
-    my $entries_per_page = 0+$opt->{rows};
-    my $offset = ( $page - 1 ) * $entries_per_page;
+    my $page             = 0 + $opt->{page};
+    my $entries_per_page = 0 + $opt->{rows};
+    my $offset           = ($page - 1) * $entries_per_page;
 
     $sql .= " LIMIT @{[ $entries_per_page + 1 ]} OFFSET $offset";
 
@@ -21,14 +21,14 @@ sub search_by_sql_with_pager {
     $sth->execute(@$binds) or Carp::croak $self->dbh->errstr;
 
     my $itr = Oden::Iterator->new(
-        oden             => $self,
-        sth              => $sth,
-        sql              => $sql,
-        row_class        => $self->schema->get_row_class($table_name),
-        table_name       => $table_name,
+        oden                     => $self,
+        sth                      => $sth,
+        sql                      => $sql,
+        row_class                => $self->schema->get_row_class($table_name),
+        table_name               => $table_name,
         suppress_object_creation => $self->suppress_row_objects,
     );
-    my $rows = [$itr->all];
+    my $rows     = [$itr->all];
     my $has_next = 0;
     if (@$rows == $entries_per_page + 1) {
         pop @$rows;
@@ -43,7 +43,6 @@ sub search_by_sql_with_pager {
 
     return ($rows, $pager);
 }
-
 
 1;
 __END__

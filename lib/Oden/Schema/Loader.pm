@@ -4,19 +4,20 @@ use warnings;
 use DBIx::Inspector;
 use Oden::Schema;
 use Oden::Schema::Table;
-use Carp ();
+use Carp        ();
 use Class::Load ();
 
 sub load {
     my $class = shift;
-    my %args = @_==1 ? %{$_[0]} : @_;
+    my %args = @_ == 1 ? %{$_[0]} : @_;
 
     my $namespace = $args{namespace} or Carp::croak("missing mandatory parameter 'namespace'");
 
     Class::Load::load_optional_class($namespace) or do {
         # make oden class automatically
         require Oden;
-        no strict 'refs'; @{"$namespace\::ISA"} = ('Oden');
+        no strict 'refs';
+        @{"$namespace\::ISA"} = ('Oden');
     };
 
     my $oden = $namespace->new(%args, loader => 1);
@@ -31,7 +32,7 @@ sub load {
     for my $table_info ($inspector->tables) {
 
         my $table_name = $table_info->name;
-        my @table_pk   = map { $_->name } $table_info->primary_key;
+        my @table_pk = map { $_->name } $table_info->primary_key;
         my @col_names;
         my %sql_types;
         for my $col ($table_info->columns) {
@@ -48,8 +49,7 @@ sub load {
                 inflators    => [],
                 deflators    => [],
                 row_class    => join '::', $namespace, 'Row', Oden::Schema::camelize($table_name),
-            )
-        );
+            ));
     }
 
     $schema->prepare_from_dbh($dbh);

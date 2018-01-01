@@ -4,22 +4,26 @@ use t::Utils;
 use Test::More;
 
 {
+
     package Mock::BasicALLINONE;
     use parent 'Oden';
 
     sub setup_test_db {
-        shift->do(q{
+        shift->do(
+            q{
             CREATE TABLE mock_basic (
                 id   integer,
                 name text,
                 delete_fg int(1) default 0,
                 primary key ( id )
             )
-        });
+        }
+        );
     }
 }
 
 {
+
     package Mock::BasicALLINONE::Schema;
     use utf8;
     use Oden::Schema::Declare;
@@ -37,26 +41,28 @@ use Test::More;
 }
 
 {
+
     package Mock::BasicALLINONE::Row::MockBasic;
     use strict;
     use warnings;
     use base 'Oden::Row';
 }
 
-my $db = Mock::BasicALLINONE->new(connect_info => ['dbi:SQLite::memory:', '','']);
+my $db = Mock::BasicALLINONE->new(connect_info => ['dbi:SQLite::memory:', '', '']);
 
 $db->setup_test_db;
-$db->insert('mock_basic',{
-    id   => 1,
-    name => 'perl',
-});
+$db->insert(
+    'mock_basic', {
+        id   => 1,
+        name => 'perl',
+    });
 
 my $itr = $db->search_by_sql(q{SELECT * FROM mock_basic WHERE id = ?}, [1]);
 isa_ok $itr, 'Oden::Iterator';
 
 my $row = $itr->next;
 isa_ok $row, 'Mock::BasicALLINONE::Row::MockBasic';
-is $row->id , 1;
+is $row->id,   1;
 is $row->name, 'perl';
 
 done_testing;

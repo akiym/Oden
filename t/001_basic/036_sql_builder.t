@@ -20,16 +20,15 @@ subtest "sql_builder_class" => sub {
 };
 
 subtest "sql_builder_args" => sub {
-    my $oden = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder', sql_builder_args => { strict => 1 }});
+    my $oden = Mock::Basic->new({dbh => $dbh, sql_builder_class => 'My::SQL::Builder', sql_builder_args => {strict => 1}});
     ok $oden->{sql_builder}->{strict};
 };
 
 done_testing;
 
-package
-    My::SQL::Builder;
+package My::SQL::Builder;
 
 sub new {
     my ($class, %args) = @_;
-    bless { %args }, $class;
+    bless {%args}, $class;
 }

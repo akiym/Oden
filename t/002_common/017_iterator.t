@@ -6,17 +6,19 @@ my $dbh = t::Utils->setup_dbh;
 my $db = Mock::Basic->new({dbh => $dbh});
 $db->setup_test_db;
 
-$db->insert('mock_basic',{
-    id   => 1,
-    name => 'perl',
-});
-$db->insert('mock_basic',{
-    id   => 2,
-    name => 'ruby',
-});
+$db->insert(
+    'mock_basic', {
+        id   => 1,
+        name => 'perl',
+    });
+$db->insert(
+    'mock_basic', {
+        id   => 2,
+        name => 'ruby',
+    });
 
 subtest 'all' => sub {
-    my $itr = $db->search("mock_basic");
+    my $itr  = $db->search("mock_basic");
     my $rows = $itr->all;
     is ref $rows, 'ARRAY';
     is $rows->[0]->id, 1;
@@ -51,7 +53,7 @@ subtest 'iterator with suppress_object_creation on to off' => sub {
 
     my $row = $itr->next;
     is ref($row), 'HASH';
-    is_deeply $row,  {
+    is_deeply $row, {
         id        => 1,
         delete_fg => 0,
         name      => 'perl',
@@ -62,9 +64,9 @@ subtest 'iterator with suppress_object_creation on to off' => sub {
     isa_ok $row, 'Oden::Row';
     my $dat = $row->get_columns;
     is_deeply $dat, {
-          id        => 2,
-          delete_fg => 0,
-          name      => 'ruby',
+        id        => 2,
+        delete_fg => 0,
+        name      => 'ruby',
     };
 };
 
@@ -75,7 +77,7 @@ subtest 'iterator with suppress_row_objects on to off' => sub {
 
     my $row = $itr->next;
     is ref($row), 'HASH';
-    is_deeply $row,  {
+    is_deeply $row, {
         id        => 1,
         delete_fg => 0,
         name      => 'perl',
@@ -88,9 +90,9 @@ subtest 'iterator with suppress_row_objects on to off' => sub {
     isa_ok $row, 'Oden::Row';
     my $dat = $row->get_columns;
     is_deeply $dat, {
-          id        => 1,
-          delete_fg => 0,
-          name      => 'perl',
+        id        => 1,
+        delete_fg => 0,
+        name      => 'perl',
     };
 };
 
@@ -101,7 +103,7 @@ subtest 'iterator with suppress_row_objects on with cache' => sub {
 
     my $row = $itr->next;
     is ref($row), 'HASH';
-    is_deeply $row,  {
+    is_deeply $row, {
         id        => 1,
         delete_fg => 0,
         name      => 'perl',
@@ -110,9 +112,9 @@ subtest 'iterator with suppress_row_objects on with cache' => sub {
     $row = $itr->next;
     is ref($row), 'HASH';
     is_deeply $row, {
-          id        => 2,
-          delete_fg => 0,
-          name      => 'ruby',
+        id        => 2,
+        delete_fg => 0,
+        name      => 'ruby',
     };
 };
 
