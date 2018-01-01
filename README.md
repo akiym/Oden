@@ -1,18 +1,18 @@
 [![Build Status](https://travis-ci.org/akiym/Oden.svg?branch=master)](https://travis-ci.org/akiym/Oden)
 # NAME
 
-Oden - very simple DBI wrapper/ORMapper
+Oden - pretty simple DBI wrapper/ORMapper
 
 # SYNOPSIS
 
     my $db = MyDB->new({ connect_info => [ 'dbi:SQLite:' ] });
-    my $row = $db->insert( 'table' => {
+    my $row = $db->insert_and_select( 'table' => {
         col1 => $value
     } );
 
 # DESCRIPTION
 
-Oden is very simple DBI wrapper and simple O/R Mapper.
+Oden is pretty simple DBI wrapper and simple O/R Mapper.
 It aims to be lightweight, with minimal dependencies so it's easier to install. 
 
 # BASIC USAGE
@@ -43,7 +43,7 @@ in your script.
     
     my $oden = Your::Model->new(\%args);
     # insert new record.
-    my $row = $oden->insert('user',
+    my $row = $oden->insert_and_select('user',
         {
             id   => 1,
         }
@@ -190,20 +190,20 @@ Oden provides a number of methods to all your classes,
 
         Speficies the arguments for constructor of `sql_builder_class`. This is not used when `sql_builder` is specified.
 
-- `$row = $oden->insert($table_name, \%row_data)`
+- `$row = $oden->insert_and_select($table_name, \%row_data)`
 
     Inserts a new record. Returns the inserted row object.
 
-        my $row = $oden->insert('user',{
+        my $row = $oden->insert_and_select('user',{
             id   => 1,
             name => 'nekokak',
         });
 
     If a primary key is available, it will be fetched after the insert -- so
     an INSERT followed by SELECT is performed. If you do not want this, use
-    `fast_insert`.
+    `insert`.
 
-- `$last_insert_id = $oden->fast_insert($table_name, \%row_data);`
+- `$last_insert_id = $oden->insert($table_name, \%row_data);`
 
     insert new record and get last\_insert\_id.
 
@@ -211,7 +211,7 @@ Oden provides a number of methods to all your classes,
 
 - `$oden->do_insert`
 
-    Internal method called from `insert` and `fast_insert`. You can hook it on your responsibility.
+    Internal method called from `insert` and `insert`. You can hook it on your responsibility.
 
 - `$oden->bulk_insert($table_name, \@rows_data, \%opt)`
 

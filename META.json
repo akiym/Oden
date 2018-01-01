@@ -1,5 +1,5 @@
 {
-   "abstract" : "very simple DBI wrapper/ORMapper",
+   "abstract" : "pretty simple DBI wrapper/ORMapper",
    "author" : [
       "Takumi Akiyama <t.akiym@gmail.com>"
    ],

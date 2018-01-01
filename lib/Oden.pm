@@ -356,7 +356,7 @@ sub do_insert {
     $self->execute($sql, \@binds);
 }
 
-sub fast_insert {
+sub insert {
     my ($self, $table_name, $args, $prefix) = @_;
 
     my $sth = $self->do_insert($table_name, $args, $prefix);
@@ -369,7 +369,7 @@ sub fast_insert {
     $self->_last_insert_id($table_name);
 }
 
-sub insert {
+sub insert_and_select {
     my ($self, $table_name, $args, $prefix) = @_;
 
     my $sth = $self->do_insert($table_name, $args, $prefix);
@@ -756,7 +756,7 @@ Oden - pretty simple DBI wrapper/ORMapper
 =head1 SYNOPSIS
 
     my $db = MyDB->new({ connect_info => [ 'dbi:SQLite:' ] });
-    my $row = $db->insert( 'table' => {
+    my $row = $db->insert_and_select( 'table' => {
         col1 => $value
     } );
 
@@ -791,7 +791,7 @@ in your script.
     
     my $oden = Your::Model->new(\%args);
     # insert new record.
-    my $row = $oden->insert('user',
+    my $row = $oden->insert_and_select('user',
         {
             id   => 1,
         }
@@ -944,20 +944,20 @@ Speficies the arguments for constructor of C<sql_builder_class>. This is not use
 
 =back
 
-=item C<$row = $oden-E<gt>insert($table_name, \%row_data)>
+=item C<$row = $oden-E<gt>insert_and_select($table_name, \%row_data)>
 
 Inserts a new record. Returns the inserted row object.
 
-    my $row = $oden->insert('user',{
+    my $row = $oden->insert_and_select('user',{
         id   => 1,
         name => 'nekokak',
     });
 
 If a primary key is available, it will be fetched after the insert -- so
 an INSERT followed by SELECT is performed. If you do not want this, use
-C<fast_insert>.
+C<insert>.
 
-=item C<$last_insert_id = $oden-E<gt>fast_insert($table_name, \%row_data);>
+=item C<$last_insert_id = $oden-E<gt>insert($table_name, \%row_data);>
 
 insert new record and get last_insert_id.
 
@@ -965,7 +965,7 @@ no creation row object.
 
 =item C<< $oden->do_insert >>
 
-Internal method called from C<insert> and C<fast_insert>. You can hook it on your responsibility.
+Internal method called from C<insert> and C<insert>. You can hook it on your responsibility.
 
 =item C<$oden-E<gt>bulk_insert($table_name, \@rows_data, \%opt)>
 
