@@ -663,19 +663,19 @@ sub new_row_from_hash {
     return $data if $self->{suppress_row_objects};
 
     $table->{row_class}->new({
-            sql => $sql || do {
-                my @caller = caller(0);
-                my $level  = 0;
-                while ($caller[0] eq __PACKAGE__ || $caller[0] eq ref $self) {
-                    @caller = caller(++$level);
-                }
-                sprintf '/* DUMMY QUERY %s->new_row_from_hash created from %s line %d */', ref $self, $caller[1], $caller[2];
-            },
-            row_data   => $data,
-            oden       => $self,
-            table      => $table,
-            table_name => $table_name,
-        });
+        sql => $sql || do {
+            my @caller = caller(0);
+            my $level  = 0;
+            while ($caller[0] eq __PACKAGE__ || $caller[0] eq ref $self) {
+                @caller = caller(++$level);
+            }
+            sprintf '/* DUMMY QUERY %s->new_row_from_hash created from %s line %d */', ref $self, $caller[1], $caller[2];
+        },
+        row_data   => $data,
+        oden       => $self,
+        table      => $table,
+        table_name => $table_name,
+    });
 }
 
 sub single_named {
