@@ -113,7 +113,7 @@ sub all {
         }
     }
 
-    return wantarray ? @$result : $result;
+    return $result;
 }
 
 1;

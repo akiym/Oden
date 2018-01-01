@@ -50,7 +50,7 @@ sub search_with_pager {
     $pager->current_page($page);
     $pager->total_entries($total_entries);
 
-    return ([$itr->all], $pager);
+    return ($itr->all, $pager);
 }
 
 1;

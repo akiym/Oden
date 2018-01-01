@@ -28,7 +28,7 @@ sub search_by_sql_with_pager {
         table_name               => $table_name,
         suppress_object_creation => $self->suppress_row_objects,
     );
-    my $rows     = [$itr->all];
+    my $rows     = $itr->all;
     my $has_next = 0;
     if (@$rows == $entries_per_page + 1) {
         pop @$rows;

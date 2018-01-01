@@ -621,7 +621,7 @@ sub search_by_sql {
         guess_sql_types          => $self->{guess_sql_types},
         suppress_object_creation => $self->{suppress_row_objects},
     );
-    return wantarray ? $itr->all : $itr;
+    return $itr->all;
 }
 
 sub single_by_sql {
@@ -1017,20 +1017,12 @@ You can also call delete on a row object:
     my $row = $oden->single('user', {id => 1});
     $row->delete
 
-=item C<$itr = $oden-E<gt>search($table_name, [\%search_condition, [\%search_attr]])>
+=item C<$rows = $oden-E<gt>search($table_name, [\%search_condition, [\%search_attr]])>
 
 simple search method.
-search method get Oden::Iterator's instance object.
+search method get arrayref of Oden::Row's instance object.
 
-see L<Oden::Iterator>
-
-get iterator:
-
-    my $itr = $oden->search('user',{id => 1},{order_by => 'id'});
-
-get rows:
-
-    my @rows = $oden->search('user',{id => 1},{order_by => 'id'});
+    my $rows = $oden->search('user',{id => 1},{order_by => 'id'});
 
 =item C<$row = $oden-E<gt>single($table_name, \%search_condition)>
 
@@ -1047,26 +1039,26 @@ It's useful in such as testing.
     my $row = $oden->new_row_from_hash('user', { id => 1, foo => "bar" });
     say $row->foo; # say bar
 
-=item C<$itr = $oden-E<gt>search_named($sql, [\%bind_values, [$table_name]])>
+=item C<$rows = $oden-E<gt>search_named($sql, [\%bind_values, [$table_name]])>
 
 execute named query
 
-    my $itr = $oden->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
+    my $rows = $oden->search_named(q{SELECT * FROM user WHERE id = :id}, {id => 1});
 
 If you give ArrayRef to value, that is expanded to "(?,?,?,?)" in SQL.
 It's useful in case use IN statement.
 
     # SELECT * FROM user WHERE id IN (?,?,?);
     # bind [1,2,3]
-    my $itr = $oden->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
+    my $rows = $oden->search_named(q{SELECT * FROM user WHERE id IN :ids}, {ids => [1, 2, 3]});
 
 If you give table_name. It is assumed the hint that makes Oden::Row's Object.
 
-=item C<$itr = $oden-E<gt>search_by_sql($sql, [\@bind_values, [$table_name]])>
+=item C<$rows = $oden-E<gt>search_by_sql($sql, [\@bind_values, [$table_name]])>
 
 execute your SQL
 
-    my $itr = $oden->search_by_sql(q{
+    my $rows = $oden->search_by_sql(q{
         SELECT
             id, name
         FROM
